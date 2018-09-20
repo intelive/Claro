@@ -1,0 +1,25 @@
+{
+  "name": "intelive/claro",
+  "description": "Use historical data to uncover your most profitable merchandise, channels, and customer segments",
+  "author": [
+      {
+         "name": "Intelive.",
+         "email": "intelive.claro@gmail.com",
+         "homepage": "https://www.unityreports.com/"
+      }
+   ],
+  "type": "magento2-module",
+  "version": "1.0.0",
+  "license": [
+    "GPL-3.0+"
+  ],
+  "require": {
+    "php": ">=5.5.0"
+  },
+  "autoload": {
+    "files": ["registration.php"],
+    "psr-4": {
+       "Intelive\\Claro\\": ""
+    }
+  }
+}
