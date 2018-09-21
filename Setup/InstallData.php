@@ -57,92 +57,92 @@ class InstallData implements InstallDataInterface
 //        $data[] = array('path' => 'intelive/general/enabled', 'value' => '1');
 //        $setup->getConnection()->insertArray($setup->getTable('core_config_data'), ['path', 'value'], $data);
 
-//        if (!$this->urlRewrite->getCollection()->getItemByColumnValue('request_path', 'intelive/module/abandoned_carts')) {
-//            $urls[] = array(
-//                null,
-//                'custom',
-//                0,
-//                'intelive/module/abandoned_carts',
-//                'intelive/module/abandonedcarts',
-//                0,
-//                $this->storeManager->getStore()->getId(),
-//                null,
-//                0,
-//                null
-//            );
-//            $urls[] = array(
-//                null,
-//                'custom',
-//                0,
-//                'intelive/module/creditmemos',
-//                'intelive/module/creditmemos',
-//                0,
-//                $this->storeManager->getStore()->getId(),
-//                null,
-//                0,
-//                null
-//            );
-//            $urls[] = array(
-//                null,
-//                'custom',
-//                0,
-//                'intelive/module/customers',
-//                'intelive/module/customers',
-//                0,
-//                $this->storeManager->getStore()->getId(),
-//                null,
-//                0,
-//                null
-//            );
-//            $urls[] = array(
-//                null,
-//                'custom',
-//                0,
-//                'intelive/module/invoices',
-//                'intelive/module/invoices',
-//                0,
-//                $this->storeManager->getStore()->getId(),
-//                null,
-//                0,
-//                null
-//            );
-//            $urls[] = array(
-//                null,
-//                'custom',
-//                0,
-//                'intelive/module/order_items',
-//                'intelive/module/order_items',
-//                0,
-//                $this->storeManager->getStore()->getId(),
-//                null,
-//                0,
-//                null
-//            );
-//            $urls[] = array(
-//                null,
-//                'custom',
-//                0,
-//                'intelive/module/orders',
-//                'intelive/module/orders',
-//                0,
-//                $this->storeManager->getStore()->getId(),
-//                null,
-//                0,
-//                null
-//            );
-//            $urls[] = array(
-//                null,
-//                'custom',
-//                0,
-//                'intelive/module/products',
-//                'intelive/module/products',
-//                0,
-//                $this->storeManager->getStore()->getId(),
-//                null,
-//                0,
-//                null
-//            );
-//            $setup->getConnection()->insertArray($setup->getTable(self::$table), self::$fields, $urls);
-//        }
+        if (!$this->urlRewrite->getCollection()->getItemByColumnValue('request_path', 'intelive/module/abandoned_carts')) {
+            $urls[] = array(
+                null,
+                'custom',
+                0,
+                'intelive/module/abandoned_carts',
+                'intelive/module/abandonedcarts',
+                0,
+                $this->storeManager->getStore()->getId(),
+                null,
+                0,
+                null
+            );
+            $urls[] = array(
+                null,
+                'custom',
+                0,
+                'intelive/module/creditmemos',
+                'intelive/module/creditmemos',
+                0,
+                $this->storeManager->getStore()->getId(),
+                null,
+                0,
+                null
+            );
+            $urls[] = array(
+                null,
+                'custom',
+                0,
+                'intelive/module/customers',
+                'intelive/module/customers',
+                0,
+                $this->storeManager->getStore()->getId(),
+                null,
+                0,
+                null
+            );
+            $urls[] = array(
+                null,
+                'custom',
+                0,
+                'intelive/module/invoices',
+                'intelive/module/invoices',
+                0,
+                $this->storeManager->getStore()->getId(),
+                null,
+                0,
+                null
+            );
+            $urls[] = array(
+                null,
+                'custom',
+                0,
+                'intelive/module/order_items',
+                'intelive/module/order_items',
+                0,
+                $this->storeManager->getStore()->getId(),
+                null,
+                0,
+                null
+            );
+            $urls[] = array(
+                null,
+                'custom',
+                0,
+                'intelive/module/orders',
+                'intelive/module/orders',
+                0,
+                $this->storeManager->getStore()->getId(),
+                null,
+                0,
+                null
+            );
+            $urls[] = array(
+                null,
+                'custom',
+                0,
+                'intelive/module/products',
+                'intelive/module/products',
+                0,
+                $this->storeManager->getStore()->getId(),
+                null,
+                0,
+                null
+            );
+            $setup->getConnection()->insertArray($setup->getTable(self::$table), self::$fields, $urls);
+        }
     }
 }
