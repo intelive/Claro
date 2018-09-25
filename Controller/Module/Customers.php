@@ -49,8 +49,10 @@ class Customers extends \Intelive\Claro\Controller\Module
         $customers = $this->customersFactory->create();
 
         if ($this->isAuthorized() != true || $this->isEnabled() != true) {
-            $result->setHttpResponseCode(\Magento\Framework\App\Response\Http::STATUS_CODE_401);
-            $result->setData(['error' => 'Invalid security token or module disabled']);
+            $content = $this->helper->prepareDefaultResult();
+            $result->setHttpResponseCode($content['status']);
+            $result->setData($content['data']);
+
             return $result;
         }
 

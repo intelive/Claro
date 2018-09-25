@@ -8,12 +8,15 @@
 
 namespace Intelive\Claro\Helper;
 
+use Magento\Catalog\Model\Product;
 use Magento\Framework\App\Helper\Context;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Module\ModuleListInterface;
 
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
+    const TYPE = 'SYNC';
+
     protected $config;
 
     protected $store;
@@ -134,40 +137,73 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      }
 
     /**
+     * @return bool
+     */
+     public function prepareDefaultResult() {
+         // If we don't have the token, check the api configuration
+         if (!isset($_SERVER['HTTP_X_CLARO_TOKEN'])) {
+             $this->getConfig();
+
+             if (
+                 $this->config['license_key'] != '' &&
+                 $this->config['api_key'] != '' &&
+                 $this->config['api_secret'] != ''
+             ) {
+                 return [
+                         'status' => \Magento\Framework\App\Response\Http::STATUS_CODE_200,
+                         'data' => true
+                     ];
+             }
+
+             return [
+                 'status' => \Magento\Framework\App\Response\Http::STATUS_CODE_200,
+                 'data' => false
+             ];
+         } else {
+             return [
+                'status' => \Magento\Framework\App\Response\Http::STATUS_CODE_401,
+                'data' => ['error' => 'Invalid security token or module disabled']
+             ];
+         }
+
+
+     }
+
+    /**
      * @param $payload
-     * @param $type
+     * @param $entity
      * @return array
      */
-    public function prepareResult($payload, $type)
+    public function prepareResult($payload, $entity)
     {
         $this->getConfig();
 
         $responseIsEncoded = false;
         $responseIsCompressed = false;
 
-        $content = $payload;
+        $data = $payload;
         $encoded = $this->encode($payload);
         if ($encoded) {
             $responseIsEncoded = true;
-            $content = $encoded;
+            $data = $encoded;
         }
 
         $compressed = $this->compress($encoded);
         if ($compressed) {
             $responseIsCompressed = true;
-            $content = $compressed;
+            $data = $compressed;
         }
 
         // Get the id of the last returned entity
-        $lastId = $this->syncResourceModel->getLastIdDate($type);
-
-        // $this->decode($this->deCompress($compressed))
+        $lastId = $this->syncResourceModel->getLastId($entity);
 
         return [
             'isEncoded' => $responseIsEncoded,
             'isCompressed' => $responseIsCompressed,
-            'content' => $content,
-            'type' => $type,
+            'data' => $data,
+            'license_key' => $this->config['license_key'],
+            'entity' => $entity,
+            'type' => self::TYPE,
             'lastId' => $lastId
         ];
     }
@@ -207,8 +243,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected function decode($payload)
     {
-        list($encrypted_data, $iv) = explode('::', base64_decode($payload), 2);
-        return json_decode(openssl_decrypt($encrypted_data, 'aes-256-cbc', $this->config['api_secret'], 0, $iv));
+        list($encryptedData, $iv) = explode('::', base64_decode($payload), 2);
+        return json_decode(openssl_decrypt($encryptedData, 'aes-256-cbc', $this->config['api_secret'], 0, $iv));
     }
 
     /**

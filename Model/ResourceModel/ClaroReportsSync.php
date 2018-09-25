@@ -28,6 +28,36 @@ class ClaroReportsSync extends AbstractDb
         $this->_init('claroreports_sync', 'id');
     }
 
+    /**
+     * Returns the last synced Id
+     *
+     * @param $entity
+     * @return int
+     */
+    public function getLastId($entity) {
+        $collection = $this->syncCollection
+            ->create()
+            ->addFieldToSelect(['*'])
+            ->addFieldToFilter('entity', $entity)
+            ->setOrder('last_sent_id', 'DESC')
+            ->setPageSize('1')
+            ->setCurPage('1')
+        ;
+
+        $lastId = 0;
+        /** @var ClaroReportsSync $syncEntry */
+        foreach ($collection as $syncEntry) {
+            $lastId = $syncEntry->getLastSentId();
+        }
+
+        return $lastId;
+    }
+
+    /**
+     * Returns the last synced Id along with the sync date
+     * @param $entity
+     * @return string
+     */
     public function getLastIdDate($entity)
     {
         $collection = $this->syncCollection
