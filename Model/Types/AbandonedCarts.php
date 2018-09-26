@@ -99,7 +99,7 @@ class AbandonedCarts
             }
         }
         if (isset($cart)) {
-            $this->helper->saveSyncData($cart->getId(), 'abcart');
+            $this->helper->saveSyncData($cart->getId(), AbandonedCart::ENTITY_TYPE);
         }
 
         return $this->carts;

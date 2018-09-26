@@ -41,7 +41,7 @@ class Customer
         $this->entity_name = self::ENTITY_TYPE;
         $this->id = $customer->getId();
         $this->store_id = $customer->getStoreId();
-        $this->creation_date = $customer->getCreatedAtTimestamp();
+        $this->created_at = $customer->getCreatedAt();
         $this->dob = $customer->getDob();
         $this->name = $customer->getName();
         $this->gender = $customer->getGender();

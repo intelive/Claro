@@ -99,11 +99,12 @@ class Products
             }
         }
         if (isset($product)) {
-            $this->helper->saveSyncData($product->getId(), 'product');
+            $this->helper->saveSyncData($product->getId(), Product::ENTITY_TYPE);
         }
 
         return $this->products;
     }
+
 
     protected function getProductAttributes()
     {

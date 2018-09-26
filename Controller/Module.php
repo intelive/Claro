@@ -69,8 +69,11 @@ abstract class Module extends \Magento\Framework\App\Action\Action {
         return $this->helper->getConfig()['enabled'];
     }
 
+    /**
+     * @return bool
+     */
     protected function isAuthorized() {
-        $token = $this->helper->getConfig()['license_key'];
+        $token = $this->helper->getConfig()['api_key'];
         $authToken = (isset($_SERVER['HTTP_X_CLARO_TOKEN']) ? $_SERVER['HTTP_X_CLARO_TOKEN'] : $_SERVER['X_CLARO_TOKEN']);
 
         if (empty($authToken)) {

@@ -8,6 +8,7 @@
 
 namespace Intelive\Claro\Controller\Module;
 
+use Intelive\Claro\Model\Types\Order;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Intelive\Claro\Model\Types\OrdersFactory;
@@ -56,7 +57,7 @@ class Orders extends \Intelive\Claro\Controller\Module
             return $result;
         }
 
-        $data['orders'] = $orders->load(
+        $data = $orders->load(
             $this->pageSize,
             $this->pageNum,
             $this->startDate,
@@ -67,7 +68,7 @@ class Orders extends \Intelive\Claro\Controller\Module
             $this->fromId
         );
 
-        $encodedData = $this->helper->prepareResult($data, 'order');
+        $encodedData = $this->helper->prepareResult($data, Order::ENTITY_TYPE);
 
         return $result->setData($encodedData);
     }

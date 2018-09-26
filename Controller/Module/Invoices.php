@@ -8,6 +8,7 @@
 
 namespace Intelive\Claro\Controller\Module;
 
+use Intelive\Claro\Model\Types\Invoice;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Intelive\Claro\Model\Types\InvoicesFactory;
@@ -56,7 +57,7 @@ class Invoices extends \Intelive\Claro\Controller\Module
             return $result;
         }
 
-        $data['invoices'] = $invoices->load(
+        $data = $invoices->load(
             $this->pageSize,
             $this->pageNum,
             $this->startDate,
@@ -67,7 +68,7 @@ class Invoices extends \Intelive\Claro\Controller\Module
             $this->fromId
         );
 
-        $encodedData = $this->helper->prepareResult($data, 'invoice');
+        $encodedData = $this->helper->prepareResult($data, Invoice::ENTITY_TYPE);
 
         return $result->setData($encodedData);
     }

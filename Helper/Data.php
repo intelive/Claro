@@ -16,6 +16,7 @@ use Magento\Framework\Module\ModuleListInterface;
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
     const TYPE = 'SYNC';
+    const TYPE_STOCK = 'STOCK';
 
     protected $config;
 
@@ -130,51 +131,53 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     /**
      * @return mixed
      */
-     public function getLicenseKey()
-     {
-         $licenseKey = $this->getConfig()['license_key'];
-         return $licenseKey;
-     }
+    public function getLicenseKey()
+    {
+        $licenseKey = $this->getConfig()['license_key'];
+        return $licenseKey;
+    }
 
     /**
      * @return bool
      */
-     public function prepareDefaultResult() {
-         // If we don't have the token, check the api configuration
-         if (!isset($_SERVER['HTTP_X_CLARO_TOKEN'])) {
-             $this->getConfig();
+    public function prepareDefaultResult()
+    {
+        // If we don't have the token, check the api configuration
+        if (!isset($_SERVER['HTTP_X_CLARO_TOKEN'])) {
+            $this->getConfig();
 
-             if (
-                 $this->config['license_key'] != '' &&
-                 $this->config['api_key'] != '' &&
-                 $this->config['api_secret'] != ''
-             ) {
-                 return [
-                         'status' => \Magento\Framework\App\Response\Http::STATUS_CODE_200,
-                         'data' => true
-                     ];
-             }
+            if (
+                $this->config['license_key'] != '' &&
+                $this->config['api_key'] != '' &&
+                $this->config['api_secret'] != ''
+            ) {
+                return [
+                    'status' => \Magento\Framework\App\Response\Http::STATUS_CODE_200,
+                    'data' => true
+                ];
+            }
 
-             return [
-                 'status' => \Magento\Framework\App\Response\Http::STATUS_CODE_200,
-                 'data' => false
-             ];
-         } else {
-             return [
+            return [
+                'status' => \Magento\Framework\App\Response\Http::STATUS_CODE_200,
+                'data' => false
+            ];
+        } else {
+            return [
                 'status' => \Magento\Framework\App\Response\Http::STATUS_CODE_401,
                 'data' => ['error' => 'Invalid security token or module disabled']
-             ];
-         }
+            ];
+        }
 
 
-     }
+    }
 
     /**
      * @param $payload
      * @param $entity
+     * @param $type
      * @return array
      */
-    public function prepareResult($payload, $entity)
+    public function prepareResult($payload, $entity, $type = '')
     {
         $this->getConfig();
 
@@ -183,7 +186,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
         $data = $payload;
         $encoded = $this->encode($payload);
-        if ($encoded) {
+
+        if (is_string($encoded)) {
             $responseIsEncoded = true;
             $data = $encoded;
         }
@@ -203,7 +207,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             'data' => $data,
             'license_key' => $this->config['license_key'],
             'entity' => $entity,
-            'type' => self::TYPE,
+            'type' => $type != '' ? $type : self::TYPE,
             'lastId' => $lastId
         ];
     }
@@ -214,14 +218,23 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected function compress($data)
     {
-        return base64_encode(gzcompress(serialize(($data))));
+        if (
+            extension_loaded('zlib') &&
+            function_exists('gzcompress') &&
+            function_exists('base64_encode')
+        ) {
+            return base64_encode(gzcompress(serialize(($data))));
+        }
+
+        return false;
     }
 
     /**
      * @param $data
      * @return mixed
      */
-    protected function deCompress($data) {
+    protected function deCompress($data)
+    {
         return unserialize(gzuncompress(base64_decode($data)));
     }
 

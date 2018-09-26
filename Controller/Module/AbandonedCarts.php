@@ -8,6 +8,7 @@
 
 namespace Intelive\Claro\Controller\Module;
 
+use Intelive\Claro\Model\Types\AbandonedCart;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Intelive\Claro\Model\Types\AbandonedCartsFactory;
@@ -56,7 +57,7 @@ class AbandonedCarts extends \Intelive\Claro\Controller\Module
             return $result;
         }
 
-        $data['carts'] = $abandonedCarts->load(
+        $data = $abandonedCarts->load(
             $this->pageSize,
             $this->pageNum,
             $this->startDate,
@@ -75,7 +76,7 @@ class AbandonedCarts extends \Intelive\Claro\Controller\Module
          * type (order, customer, etc)
          * lastId
          */
-        $encodedData = $this->helper->prepareResult($data, 'abandoned_cart');
+        $encodedData = $this->helper->prepareResult($data, AbandonedCart::ENTITY_TYPE);
 
         return $result->setData($encodedData);
     }

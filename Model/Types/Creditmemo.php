@@ -51,10 +51,12 @@ class Creditmemo
         $this->currency_code = $currency;
         $this->created_at = $attributes['created_at'];
 
-        $items = new \stdClass();
+        $items = [];
         foreach ($creditmemo->getItemsCollection() as $item) {
-            $items->id = $item->getProductId();
-            $items->qty = $item->getQty();
+            $items[] = [
+                'id' => $item->getProductId(),
+                'qty' => $item->getQty()
+            ];
         }
 
         $this->items = $items;

@@ -81,6 +81,7 @@ class Customers
             }
             /** @var \Magento\Customer\Model\Customer $customer */
             foreach ($collection as $customer) {
+                //todo check below:
 //                $mageCustomer = $this->objectManager->create('\Magento\Customer\Model\Customer');
 //                $customer = $mageCustomer->load($customer->getId());
                 if ($customer && $customer->getId()) {
@@ -92,7 +93,7 @@ class Customers
                 }
             }
             if (isset($customer)) {
-                $this->helper->saveSyncData($customer->getId(), 'customer');
+                $this->helper->saveSyncData($customer->getId(), Customer::ENTITY_TYPE);
             }
 
             return $this->customers;

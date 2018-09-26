@@ -82,7 +82,7 @@ class Invoices
                 }
             }
             if (isset($invoice)) {
-                $this->helper->saveSyncData($invoice->getId(), 'invoice');
+                $this->helper->saveSyncData($invoice->getId(), \Intelive\Claro\Model\Types\Invoice::ENTITY_TYPE);
             }
 
             return $this->invoices;

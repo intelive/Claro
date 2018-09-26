@@ -83,7 +83,7 @@ class Creditmemos
                 }
             }
             if (isset($creditmemo)) {
-                $this->helper->saveSyncData($creditmemo->getId(), 'creditmemo');
+                $this->helper->saveSyncData($creditmemo->getId(), \Intelive\Claro\Model\Types\Creditmemo::ENTITY_TYPE);
             }
 
             return $this->creditmemos;

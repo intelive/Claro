@@ -86,7 +86,7 @@ class Orders
                 }
             }
             if (isset($order)) {
-                $this->helper->saveSyncData($order->getId(), 'order');
+                $this->helper->saveSyncData($order->getId(), Order::ENTITY_TYPE);
             }
 
             return $this->orders;

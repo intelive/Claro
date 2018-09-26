@@ -54,8 +54,8 @@ class Stocks extends \Intelive\Claro\Controller\Module
             return $result;
         }
 
-        $data['stocks'] = $stocks->load();
-        $encodedData = $this->helper->prepareResult($data, 'stock');
+        $data = $stocks->load();
+        $encodedData = $this->helper->prepareResult($data, 'stock', Data::TYPE_STOCK);
 
         return $result->setData($encodedData);
     }

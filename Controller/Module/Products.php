@@ -8,6 +8,7 @@
 
 namespace Intelive\Claro\Controller\Module;
 
+use Intelive\Claro\Model\Types\Product;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Intelive\Claro\Model\Types\ProductsFactory;
@@ -56,7 +57,7 @@ class Products extends \Intelive\Claro\Controller\Module
             return $result;
         }
 
-        $data['products'] = $products->load(
+        $data = $products->load(
             $this->pageSize,
             $this->pageNum,
             $this->startDate,
@@ -67,7 +68,7 @@ class Products extends \Intelive\Claro\Controller\Module
             $this->fromId
         );
 
-        $encodedData = $this->helper->prepareResult($data, 'product');
+        $encodedData = $this->helper->prepareResult($data, Product::ENTITY_TYPE);
 
         return $result->setData($encodedData);
     }

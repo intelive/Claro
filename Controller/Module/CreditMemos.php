@@ -8,6 +8,7 @@
 
 namespace Intelive\Claro\Controller\Module;
 
+use Intelive\Claro\Model\Types\Creditmemo;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Intelive\Claro\Model\Types\CreditmemosFactory;
@@ -56,7 +57,7 @@ class CreditMemos extends \Intelive\Claro\Controller\Module
             return $result;
         }
 
-        $data['creditmemos'] = $creditmemos->load(
+        $data = $creditmemos->load(
             $this->pageSize,
             $this->pageNum,
             $this->startDate,
@@ -67,7 +68,7 @@ class CreditMemos extends \Intelive\Claro\Controller\Module
             $this->fromId
         );
 
-        $encodedData = $this->helper->prepareResult($data, 'creditmemo');
+        $encodedData = $this->helper->prepareResult($data, Creditmemo::ENTITY_TYPE);
 
         return $result->setData($encodedData);
     }

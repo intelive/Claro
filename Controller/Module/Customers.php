@@ -8,6 +8,7 @@
 
 namespace Intelive\Claro\Controller\Module;
 
+use Intelive\Claro\Model\Types\Customer;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Intelive\Claro\Model\Types\CustomersFactory;
@@ -56,7 +57,7 @@ class Customers extends \Intelive\Claro\Controller\Module
             return $result;
         }
 
-        $data['customers'] = $customers->load(
+        $data = $customers->load(
             $this->pageSize,
             $this->pageNum,
             $this->startDate,
@@ -67,7 +68,7 @@ class Customers extends \Intelive\Claro\Controller\Module
             $this->fromId
         );
 
-        $encodedData = $this->helper->prepareResult($data, 'customer');
+        $encodedData = $this->helper->prepareResult($data, Customer::ENTITY_TYPE);
 
         return $result->setData($encodedData);
     }
