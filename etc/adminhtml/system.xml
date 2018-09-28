@@ -2,11 +2,11 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
         <tab id="inteliveclaro" translate="label" sortOrder="10">
-            <label>Claro Config</label>
+            <label>Claro BI</label>
         </tab>
         <section id="claroconfig" translate="label" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
             <class>separator-top</class>
-            <label>Unity Reports</label>
+            <label>Claro Config</label>
             <tab>inteliveclaro</tab>
             <resource>Intelive_Claro::claro_config</resource>
             <group id="general" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -14,8 +14,7 @@
                 <comment><![CDATA[The bellow credentials should have been given to you during the registration procedure. If you don't have them, <a href='https://app.unityreports.com' target='_blank'><b>log in</b></a> into your account and retrieve them from the "Profiles" section.<br>
                         If you don't have an account yet, you must <a href='https://app.unityreports.com/account/create' target='_blank'><b>create one</b></a> before using this module.<br><BR>
                         If you are experiencing problems with this extension please run the self diagnosing test by clicking the button below.<br>
-                        For any questions or help please visit us at <a href='http://unityreports.com/contacts' target='_blank'>Unityreports.com</a>.<br><br>
-                        <span style='color:red;'><b>IMPORTANT NOTICE:</b> Remember to save the configuration <b>BEFORE</b> hitting the <b>TEST</b> button.</span><br><br>]]></comment>
+                        For any questions or help please visit us at <a href='http://unityreports.com/contacts' target='_blank'>Unityreports.com</a>.]]></comment>
                 <field id="status" translate="label" type="select" sortOrder="0" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Status</label>
                     <source_model>Intelive\Claro\Model\Config\Status\Active</source_model>
@@ -35,8 +34,8 @@
                     <comment>Address pointing to remote web service</comment>
                 </field>
                 <!--<field id="test" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">-->
-                    <!--<comment>Remember to save configuration before testing!</comment>-->
-                    <!--<source_model>Intelivemetrics_Unityreports_Block_Adminhtml_Button_Test</source_model>-->
+                <!--<comment>Remember to save configuration before testing!</comment>-->
+                <!--<source_model>Intelivemetrics_Unityreports_Block_Adminhtml_Button_Test</source_model>-->
                 <!--</field>-->
             </group>
             <group id="status" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
