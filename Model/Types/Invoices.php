@@ -73,23 +73,27 @@ class Invoices
                 return $this;
             }
 
+            $returnedIds = [];
             /** @var Invoice $invoice */
             foreach ($collection as $invoice) {
                 if ($invoice && $invoice->getId()) {
                     $model = $this->objectManager->create('\Intelive\Claro\Model\Types\Invoice')->parse($invoice);
                     if ($model) {
+                        $returnedIds[] = $invoice->getId();
                         $this->invoices['invoice_' . $invoice->getId()] = $model;
                     }
                 }
             }
+
+            return [
+                'data' => $this->invoices,
+                'last_id' => isset($invoice) ? $invoice->getId() : 0,
+                'returned_ids' => $returnedIds
+            ];
         } catch (\Exception $ex) {
             $this->helper->log($ex->getMessage(), Logger::CRITICAL);
-            $this->invoices = null;
-        }
 
-        return [
-            'data' => $this->invoices,
-            'last_id' => isset($invoice) ? $invoice->getId() : 0
-        ];
+            return [];
+        }
     }
 }

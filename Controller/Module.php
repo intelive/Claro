@@ -60,10 +60,6 @@ abstract class Module extends \Magento\Framework\App\Action\Action {
         if ((bool) $fromId = $this->getRequest()->getParam('from_id')) {
             $this->fromId = $fromId;
         }
-
-        $this->helper->log(
-            "calledClass = " . get_class($this) . "; fromId = $this->fromId; pageSize = $this->pageSize; pageNum = $this->pageNum; startDate = $this->startDate; sortDir = $this->sortDir; id = $this->id"
-        );
     }
 
     /**

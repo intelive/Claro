@@ -77,24 +77,27 @@ class Orders
                 )
                 ->limit(1);
 
+            $returnedIds = [];
             /** @var \Magento\Sales\Model\Order $order */
             foreach ($collection as $order) {
                 if ($order && $order->getId()) {
                     $model = $this->objectManager->create('\Intelive\Claro\Model\Types\Order')->parse($order);
                     if ($model) {
+                        $returnedIds[] = $order->getId();
                         $this->orders['order_' . $order->getId()] = $model;
                     }
                 }
             }
 
+            return [
+                'data' => $this->orders,
+                'last_id' => isset($order) ? $order->getId() : 0,
+                'returned_ids' => $returnedIds
+            ];
         } catch (\Exception $ex) {
             $this->helper->log($ex->getMessage(), Logger::CRITICAL);
-            $this->orders = null;
+            return [];
         }
 
-        return [
-            'data' => $this->orders,
-            'last_id' => isset($order) ? $order->getId() : 0
-        ];
     }
 }

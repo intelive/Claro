@@ -116,7 +116,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * @param $msg
      * @param $type
      */
-    public function log($msg, $type = Logger::DEBUG)
+    public function log($msg, $type = Logger::INFO)
     {
         $this->getConfig();
         // check if debug is active and overrides magentos' debug status
@@ -204,22 +204,31 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $responseIsCompressed = false;
 
         $data = $payload['data'];
-        $encoded = $this->encode($payload);
 
-        if (is_string($encoded)) {
-            $responseIsEncoded = true;
-            $data = $encoded;
-        }
+        // Encode and compress the data only if we have it
+        if (!empty($data)) {
+            $encoded = $this->encode($payload);
 
-        $compressed = $this->compress($encoded);
-        if ($compressed) {
-            $responseIsCompressed = true;
-            $data = $compressed;
+            if (is_string($encoded)) {
+                $responseIsEncoded = true;
+                $data = $encoded;
+            }
+
+            $compressed = $this->compress($encoded);
+            if ($compressed) {
+                $responseIsCompressed = true;
+                $data = $compressed;
+            }
         }
         $callType = $type != '' ? $type : self::TYPE;
-        $lastId = $payload['last_id'];
+        $lastId = isset($payload['last_id']) ? $payload['last_id'] : 0;
+        $returnedIds = isset($payload['returned_ids']) ? implode(', ', $payload['returned_ids']) : 0;
+        $url = \Magento\Framework\App\ObjectManager::getInstance()
+            ->get('Magento\Framework\UrlInterface');
+        ;
+
         $this->log(
-            "isEncoded = $responseIsEncoded; isCompressed = $responseIsCompressed; license_key = " . $this->config['license_key'] . "; lastId = $lastId; type = $callType; entity = $entity"
+            "calledUrl = " . $url->getCurrentUrl() . "; returnedIds = $returnedIds; isEncoded = $responseIsEncoded; isCompressed = $responseIsCompressed; license_key = " . $this->config['license_key'] . "; lastId = $lastId; type = $callType; entity = $entity"
         );
 
         return [

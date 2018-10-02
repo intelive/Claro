@@ -81,25 +81,28 @@ class Customers
             if ($collection->getLastPageNumber() < $pageNum) {
                 return $this;
             }
+
+            $returnedIds = [];
             /** @var \Magento\Customer\Model\Customer $customer */
             foreach ($collection as $customer) {
                 if ($customer && $customer->getId()) {
                     $customerParser = $this->objectManager->create('\Intelive\Claro\Model\Types\Customer');
                     $model = $customerParser->parse($customer);
                     if ($model) {
+                        $returnedIds[] = $customer->getId();
                         $this->customers['customer_' . $customer->getId()] = $model;
                     }
                 }
             }
 
+            return [
+                'data' => $this->customers,
+                'last_id' => isset($customer) ? $customer->getId() : 0,
+                'returned_ids' => $returnedIds
+            ];
         } catch (\Exception $ex) {
             $this->helper->log($ex->getMessage(), Logger::CRITICAL);
-            $this->customers = null;
+            return [];
         }
-
-        return [
-            'data' => $this->customers,
-            'last_id' => isset($customer) ? $customer->getId() : 0
-        ];
     }
 }

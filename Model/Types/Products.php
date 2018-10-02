@@ -89,6 +89,8 @@ class Products
             if ($collection->getLastPageNumber() < $pageNum) {
                 return $this;
             }
+
+            $returnedIds = [];
             /** @var \Magento\Catalog\Model\Product $product */
             foreach ($collection as $product) {
                 $model = $this
@@ -98,21 +100,23 @@ class Products
                         $product, $this->productAttributes
                     );
                 if ($model) {
+                    $returnedIds[] = $product->getId();
                     $this->products[] = $model;
                 }
             }
 
+            return [
+                'data' => $this->products,
+                'last_id' => isset($product) ? $product->getId() : 0,
+                'returned_ids' => $returnedIds
+            ];
+
         } catch (\Exception $ex) {
             $this->helper->log($ex->getMessage(), Logger::CRITICAL);
-            $this->products = null;
+
+            return [];
         }
-
-        return [
-            'data' => $this->products,
-            'last_id' => isset($product) ? $product->getId() : 0
-        ];
     }
-
 
     protected function getProductAttributes()
     {

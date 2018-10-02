@@ -89,25 +89,28 @@ class AbandonedCarts
             if ($collection->getLastPageNumber() < $pageNum) {
                 return $this;
             }
-
+            $returnedIds = [];
             /** @var \Magento\Quote\Model\Quote $cart */
             foreach ($collection as $cart) {
                 if ($cart) {
                     $abandonedCarts = $this->abandonedCartFactory->create();
                     $model = $abandonedCarts->parse($cart);
                     if ($model) {
+                        $returnedIds[] = $cart->getId();
                         $this->carts['quote_' . $cart->getId()] = $model;
                     }
                 }
             }
-        } catch (\Exception $ex) {
-            $this->carts = null;
-            $this->helper->log($ex->getMessage(), Logger::CRITICAL);
-        }
 
-        return [
-            'data' => $this->carts,
-            'last_id' => isset($cart) ? $cart->getId() : 0
-        ];
+            return [
+                'data' => $this->carts,
+                'last_id' => isset($cart) ? $cart->getId() : 0,
+                'returned_ids' => $returnedIds
+            ];
+        } catch (\Exception $ex) {
+            $this->helper->log($ex->getMessage(), Logger::CRITICAL);
+
+            return [];
+        }
     }
 }

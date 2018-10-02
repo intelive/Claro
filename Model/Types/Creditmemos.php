@@ -74,24 +74,28 @@ class Creditmemos
                 return $this;
             }
 
+            $returnedIds = [];
             /** @var Creditmemo $creditmemo */
             foreach ($collection as $creditmemo) {
                 if ($creditmemo && $creditmemo->getId()) {
                     $model = $this->objectManager->create('\Intelive\Claro\Model\Types\Creditmemo')->parse($creditmemo);
                     if ($model) {
+                        $returnedIds[] = $creditmemo->getId();
                         $this->creditmemos['creditnote_' . $creditmemo->getIncrementId()] = $model;
                     }
                 }
             }
 
+            return [
+                'data' => $this->creditmemos,
+                'last_id' => isset($creditmemo) ? $creditmemo->getId() : 0,
+                'returned_ids' => $returnedIds
+            ];
+
         } catch (\Exception $ex) {
             $this->helper->log($ex->getMessage(), Logger::CRITICAL);
-            $this->creditmemos = null;
+            return [];
         }
 
-        return [
-            'data' => $this->creditmemos,
-            'last_id' => isset($creditmemo) ? $creditmemo->getId() : 0
-        ];
     }
 }
