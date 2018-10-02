@@ -12,6 +12,7 @@ use Magento\Catalog\Model\Product;
 use Magento\Framework\App\Helper\Context;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Module\ModuleListInterface;
+use Monolog\Logger;
 
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
@@ -28,6 +29,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     protected $scopeConfig;
 
+    /** @var \Intelive\Claro\Logger\Logger */
     protected $logger;
 
     protected $moduleList;
@@ -51,17 +53,18 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         StoreManagerInterface $storeManager,
         ModuleListInterface $moduleList,
         \Intelive\Claro\Model\ClaroReportsSyncFactory $syncFactory,
-        \Intelive\Claro\Model\ResourceModel\ClaroReportsSync $syncResourceModel
+        \Intelive\Claro\Model\ResourceModel\ClaroReportsSync $syncResourceModel,
+        \Intelive\Claro\Logger\Logger $logger
     )
     {
         parent::__construct($context);
         $this->context = $context;
         $this->storeManager = $storeManager;
         $this->scopeConfig = $context->getScopeConfig();
-        $this->logger = $context->getLogger();
         $this->moduleList = $moduleList;
         $this->syncFactory = $syncFactory;
         $this->syncResourceModel = $syncResourceModel;
+        $this->logger = $logger;
     }
 
     /**
@@ -93,6 +96,10 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             'claroconfig/general/api_secret',
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
+        $this->config['debug_status'] = $this->scopeConfig->getValue(
+            'claroconfig/advanced/debug_status',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
 
         return $this->config;
     }
@@ -107,10 +114,22 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * @param $msg
+     * @param $type
      */
-    public function log($msg)
+    public function log($msg, $type = Logger::DEBUG)
     {
-        $this->logger->info($msg);
+        $this->getConfig();
+        // check if debug is active and overrides magentos' debug status
+        if ($this->config['debug_status']) {
+            switch ($type) {
+                case Logger::INFO:
+                    $this->logger->info($msg);
+                    break;
+                case Logger::CRITICAL:
+                    $this->logger->crit($msg);
+                    break;
+            }
+        }
 
         return;
     }
@@ -184,7 +203,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $responseIsEncoded = false;
         $responseIsCompressed = false;
 
-        $data = $payload;
+        $data = $payload['data'];
         $encoded = $this->encode($payload);
 
         if (is_string($encoded)) {
@@ -197,9 +216,11 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             $responseIsCompressed = true;
             $data = $compressed;
         }
-
-        // Get the id of the last returned entity
-        $lastId = $this->syncResourceModel->getLastId($entity);
+        $callType = $type != '' ? $type : self::TYPE;
+        $lastId = $payload['last_id'];
+        $this->log(
+            "isEncoded = $responseIsEncoded; isCompressed = $responseIsCompressed; license_key = " . $this->config['license_key'] . "; lastId = $lastId; type = $callType; entity = $entity"
+        );
 
         return [
             'isEncoded' => $responseIsEncoded,
@@ -207,7 +228,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             'data' => $data,
             'license_key' => $this->config['license_key'],
             'entity' => $entity,
-            'type' => $type != '' ? $type : self::TYPE,
+            'type' => $callType,
             'lastId' => $lastId
         ];
     }
@@ -224,6 +245,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             function_exists('base64_encode')
         ) {
             return base64_encode(gzcompress(serialize(($data))));
+        } else {
+            $this->log('Extensions zlib or gzcompress or base64_encode do not exist', Logger::CRITICAL);
         }
 
         return false;
@@ -258,22 +281,5 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     {
         list($encryptedData, $iv) = explode('::', base64_decode($payload), 2);
         return json_decode(openssl_decrypt($encryptedData, 'aes-256-cbc', $this->config['api_secret'], 0, $iv));
-    }
-
-    /**
-     * @param $entityId
-     * @param $entity
-     */
-    public function saveSyncData($entityId, $entity)
-    {
-        try {
-            $syncModel = $this->syncFactory->create();
-            $syncModel
-                ->setData('entity', $entity)
-                ->setData('last_sent_id', $entityId)
-                ->setData('last_sent_date', date('Y-m-d H:i:s'));
-            $this->syncResourceModel->save($syncModel);
-        } catch (\Exception $e) {
-        }
     }
 }

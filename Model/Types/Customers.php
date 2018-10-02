@@ -8,6 +8,8 @@
 
 namespace Intelive\Claro\Model\Types;
 
+use Monolog\Logger;
+
 class Customers
 {
     public $customers = [];
@@ -81,9 +83,6 @@ class Customers
             }
             /** @var \Magento\Customer\Model\Customer $customer */
             foreach ($collection as $customer) {
-                //todo check below:
-//                $mageCustomer = $this->objectManager->create('\Magento\Customer\Model\Customer');
-//                $customer = $mageCustomer->load($customer->getId());
                 if ($customer && $customer->getId()) {
                     $customerParser = $this->objectManager->create('\Intelive\Claro\Model\Types\Customer');
                     $model = $customerParser->parse($customer);
@@ -92,13 +91,15 @@ class Customers
                     }
                 }
             }
-            if (isset($customer)) {
-                $this->helper->saveSyncData($customer->getId(), Customer::ENTITY_TYPE);
-            }
 
-            return $this->customers;
-        } catch (\Magento\Framework\Exception\LocalizedException $locEx) {
-            return [];
+        } catch (\Exception $ex) {
+            $this->helper->log($ex->getMessage(), Logger::CRITICAL);
+            $this->customers = null;
         }
+
+        return [
+            'data' => $this->customers,
+            'last_id' => isset($customer) ? $customer->getId() : 0
+        ];
     }
 }

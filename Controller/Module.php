@@ -60,6 +60,10 @@ abstract class Module extends \Magento\Framework\App\Action\Action {
         if ((bool) $fromId = $this->getRequest()->getParam('from_id')) {
             $this->fromId = $fromId;
         }
+
+        $this->helper->log(
+            "calledClass = " . get_class($this) . "; fromId = $this->fromId; pageSize = $this->pageSize; pageNum = $this->pageNum; startDate = $this->startDate; sortDir = $this->sortDir; id = $this->id"
+        );
     }
 
     /**
@@ -74,7 +78,7 @@ abstract class Module extends \Magento\Framework\App\Action\Action {
      */
     protected function isAuthorized() {
         $token = $this->helper->getConfig()['api_key'];
-        $authToken = (isset($_SERVER['HTTP_X_CLARO_TOKEN']) ? $_SERVER['HTTP_X_CLARO_TOKEN'] : $_SERVER['X_CLARO_TOKEN']);
+        $authToken = (isset($_SERVER['HTTP_X_CLARO_TOKEN']) ? $_SERVER['HTTP_X_CLARO_TOKEN'] : []);
 
         if (empty($authToken)) {
             return false;

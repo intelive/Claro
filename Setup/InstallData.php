@@ -49,14 +49,6 @@ class InstallData implements InstallDataInterface
         ModuleDataSetupInterface $setup,
         ModuleContextInterface $context
     ) {
-
-//        $hostname = version_compare(phpversion(), '5.3', '>=') ? gethostname() : php_uname('n');
-//        $prefix = md5($hostname);
-//        $token = sha1(uniqid($prefix, true) . rand() . microtime());
-//        $data[] = array('path' => 'intelive/general/enabled', 'value' => $token);
-//        $data[] = array('path' => 'intelive/general/enabled', 'value' => '1');
-//        $setup->getConnection()->insertArray($setup->getTable('core_config_data'), ['path', 'value'], $data);
-
         if (!$this->urlRewrite->getCollection()->getItemByColumnValue('request_path', 'intelive/module/abandoned_carts')) {
             $urls[] = array(
                 null,
@@ -100,18 +92,6 @@ class InstallData implements InstallDataInterface
                 0,
                 'intelive/module/' . rand(1, 100000),
                 'intelive/module/invoices',
-                0,
-                $this->storeManager->getStore()->getId(),
-                null,
-                0,
-                null
-            );
-            $urls[] = array(
-                null,
-                'custom',
-                0,
-                'intelive/module/' . rand(1, 100000),
-                'intelive/module/orderitems',
                 0,
                 $this->storeManager->getStore()->getId(),
                 null,

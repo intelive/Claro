@@ -59,7 +59,6 @@ class Version extends \Intelive\Claro\Controller\Module {
 
         $result = $this->resultJsonFactory->create();
         $data = new \stdClass();
-        // todo called without token respond with true / false if the license config, secret key , api key are correctly set up by the store owner
 
         $data->lastSentIdOrder = (string) $this->syncResourceModel->getLastIdDate('order');
         $data->lastSentIdProduct = (string) $this->syncResourceModel->getLastIdDate('product');

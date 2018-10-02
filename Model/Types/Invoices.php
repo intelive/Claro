@@ -10,6 +10,7 @@ namespace Intelive\Claro\Model\Types;
 
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Sales\Model\Order\Invoice;
+use Monolog\Logger;
 
 class Invoices
 {
@@ -81,12 +82,14 @@ class Invoices
                     }
                 }
             }
-            if (isset($invoice)) {
-                $this->helper->saveSyncData($invoice->getId(), \Intelive\Claro\Model\Types\Invoice::ENTITY_TYPE);
-            }
-
-            return $this->invoices;
-        } catch (NoSuchEntityException $noSuchEntityException) {
+        } catch (\Exception $ex) {
+            $this->helper->log($ex->getMessage(), Logger::CRITICAL);
+            $this->invoices = null;
         }
+
+        return [
+            'data' => $this->invoices,
+            'last_id' => isset($invoice) ? $invoice->getId() : 0
+        ];
     }
 }

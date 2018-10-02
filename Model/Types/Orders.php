@@ -9,6 +9,7 @@
 namespace Intelive\Claro\Model\Types;
 
 use Magento\Framework\Exception\NoSuchEntityException;
+use Monolog\Logger;
 
 class Orders
 {
@@ -85,12 +86,15 @@ class Orders
                     }
                 }
             }
-            if (isset($order)) {
-                $this->helper->saveSyncData($order->getId(), Order::ENTITY_TYPE);
-            }
 
-            return $this->orders;
-        } catch (NoSuchEntityException $noSuchEntityException) {
+        } catch (\Exception $ex) {
+            $this->helper->log($ex->getMessage(), Logger::CRITICAL);
+            $this->orders = null;
         }
+
+        return [
+            'data' => $this->orders,
+            'last_id' => isset($order) ? $order->getId() : 0
+        ];
     }
 }

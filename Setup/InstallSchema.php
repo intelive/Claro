@@ -8,6 +8,7 @@
 
 namespace Intelive\Claro\Setup;
 
+use Intelive\Claro\Helper\Data;
 use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
@@ -15,6 +16,14 @@ use Magento\Framework\Setup\InstallSchemaInterface;
 
 class InstallSchema implements InstallSchemaInterface
 {
+    /** @var Data */
+    protected $helper;
+
+    public function __construct(Data $helper)
+    {
+        $this->helper = $helper;
+    }
+
     /**
      * @param SchemaSetupInterface $setup
      * @param ModuleContextInterface $context
@@ -22,12 +31,12 @@ class InstallSchema implements InstallSchemaInterface
     public function install(
         SchemaSetupInterface $setup,
         ModuleContextInterface $context
-    ) {
+    )
+    {
         $installer = $setup;
         $installer->startSetup();
 
         $reportsTableName = $installer->getTable('claroreports_campaigns');
-        $syncTableName = $installer->getTable('claroreports_sync');
         try {
             // Create the claroreports_campaigns table
             if ($installer->getConnection()->isTableExists($reportsTableName) != true) {
@@ -99,52 +108,9 @@ class InstallSchema implements InstallSchemaInterface
                 $installer->getConnection()->createTable($reportsTable);
             }
 
-            // Create the claroreports_sync table
-            if ($installer->getConnection()->isTableExists($syncTableName) != true) {
-                $syncTable = $installer->getConnection()
-                    ->newTable($syncTableName)
-                    ->addColumn(
-                        'id',
-                        Table::TYPE_INTEGER,
-                        null,
-                        [
-                            'identity' => true,
-                            'unsigned' => true,
-                            'nullable' => false,
-                            'primary' => true
-                        ]
-                    )
-                    ->addColumn(
-                        'entity',
-                        Table::TYPE_TEXT,
-                        100,
-                        ['nullable' => false, 'default' => ''],
-                        'order, customer, creditmemo, product etc'
-                    )
-                    ->addColumn(
-                        'last_sent_id',
-                        Table::TYPE_INTEGER,
-                        null,
-                        ['nullable' => false],
-                        'id of the latest entity that has been synced'
-                    )
-                    ->addColumn(
-                        'last_sent_date',
-                        Table::TYPE_DATETIME,
-                        null,
-                        ['nullable' => false],
-                        'date when the latest entity has been synced'
-                    )
-                    ->setComment('Stores the last entity id that was synced')
-                    ->setOption('type', 'InnoDB')
-                    ->setOption('charset', 'utf8');
-                $installer->getConnection()->createTable($syncTable);
-            }
-
             $installer->endSetup();
-        } catch
-        (\Exception $e) {
+        } catch (\Exception $ex) {
+            $this->helper->log($ex->getMessage());
         }
-
     }
 }

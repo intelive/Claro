@@ -38,26 +38,6 @@
                 <!--<source_model>Intelivemetrics_Unityreports_Block_Adminhtml_Button_Test</source_model>-->
                 <!--</field>-->
             </group>
-            <group id="status" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>Status</label>
-                <comment><![CDATA[<span style='color:red;'><b>IMPORTANT NOTICE:</b> Historical data sync process always happens from the oldest items to the newest</span><br><br>]]></comment>
-                <field id="prod_sync_status" translate="label" type="label" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Product last synced ID</label>
-                    <frontend_model>Intelive\Claro\Block\Adminhtml\ProductLastId</frontend_model>
-                </field>
-                <field id="cust_sync_status" translate="label" type="label" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Customer sync status</label>
-                    <frontend_model>Intelive\Claro\Block\Adminhtml\CustomerLastId</frontend_model>
-                </field>
-                <field id="ord_sync_status" translate="label" type="label" sortOrder="5" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Order sync status</label>
-                    <frontend_model>Intelive\Claro\Block\Adminhtml\OrderLastId</frontend_model>
-                </field>
-                <field id="inv_sync_status" translate="label" type="label" sortOrder="6" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Invoice sync status</label>
-                    <frontend_model>Intelive\Claro\Block\Adminhtml\InvoiceLastId</frontend_model>
-                </field>
-            </group>
             <group id="advanced" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
                 <label>Advanced</label>
                 <field id="use_shipping" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">

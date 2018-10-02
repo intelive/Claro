@@ -8,6 +8,8 @@
 
 namespace Intelive\Claro\Model\Types;
 
+use Monolog\Logger;
+
 class Products
 {
 
@@ -57,52 +59,58 @@ class Products
      */
     public function load($pageSize, $pageNum, $startDate = null, $endDate = null, $sortDir, $filterBy, $id, $fromId)
     {
-        $this->pageNum = $pageNum;
-        $this->getProductAttributes();
-        if ($id) {
-            $collection = $this->productFactory->create()
-                ->addAttributeToSelect('*')
-                ->addAttributeToFilter('entity_id', $id);
-        } elseif ($startDate && $endDate) {
-            $from = date('Y-m-d 00:00:00', strtotime($startDate));
-            $to = date('Y-m-d 23:59:59', strtotime($endDate));
-            $collection = $this->productFactory->create()
-                ->addAttributeToSelect('*')
-                ->addAttributeToFilter($filterBy, array('from' => $from, 'to' => $to));
-        } else {
-            $collection = $this->productFactory->create()
-                ->addAttributeToSelect('*');
-        }
-        if ($fromId) {
-            $collection->addFieldToFilter('entity_id', ['gteq' => $fromId]);
-        }
-
-        $collection->joinField('qty', 'cataloginventory_stock_item', 'qty', 'product_id=entity_id', '{{table}}.stock_id=1', 'left');
-
-        $collection->setStore($this->helper->getStore());
-        $collection->setOrder('updated_at', $sortDir);
-        $collection->setCurPage($pageNum);
-        $collection->setPageSize($pageSize);
-        if ($collection->getLastPageNumber() < $pageNum) {
-            return $this;
-        }
-        /** @var \Magento\Catalog\Model\Product $product */
-        foreach ($collection as $product) {
-            $model = $this
-                ->objectManager
-                ->create('\Intelive\Claro\Model\Types\Product')
-                ->parse(
-                    $product, $this->productAttributes
-                );
-            if ($model) {
-                $this->products[] = $model;
+        try {
+            $this->pageNum = $pageNum;
+            $this->getProductAttributes();
+            if ($id) {
+                $collection = $this->productFactory->create()
+                    ->addAttributeToSelect('*')
+                    ->addAttributeToFilter('entity_id', $id);
+            } elseif ($startDate && $endDate) {
+                $from = date('Y-m-d 00:00:00', strtotime($startDate));
+                $to = date('Y-m-d 23:59:59', strtotime($endDate));
+                $collection = $this->productFactory->create()
+                    ->addAttributeToSelect('*')
+                    ->addAttributeToFilter($filterBy, array('from' => $from, 'to' => $to));
+            } else {
+                $collection = $this->productFactory->create()
+                    ->addAttributeToSelect('*');
             }
-        }
-        if (isset($product)) {
-            $this->helper->saveSyncData($product->getId(), Product::ENTITY_TYPE);
+            if ($fromId) {
+                $collection->addFieldToFilter('entity_id', ['gteq' => $fromId]);
+            }
+
+            $collection->joinField('qty', 'cataloginventory_stock_item', 'qty', 'product_id=entity_id', '{{table}}.stock_id=1', 'left');
+
+            $collection->setStore($this->helper->getStore());
+            $collection->setOrder('updated_at', $sortDir);
+            $collection->setCurPage($pageNum);
+            $collection->setPageSize($pageSize);
+            if ($collection->getLastPageNumber() < $pageNum) {
+                return $this;
+            }
+            /** @var \Magento\Catalog\Model\Product $product */
+            foreach ($collection as $product) {
+                $model = $this
+                    ->objectManager
+                    ->create('\Intelive\Claro\Model\Types\Product')
+                    ->parse(
+                        $product, $this->productAttributes
+                    );
+                if ($model) {
+                    $this->products[] = $model;
+                }
+            }
+
+        } catch (\Exception $ex) {
+            $this->helper->log($ex->getMessage(), Logger::CRITICAL);
+            $this->products = null;
         }
 
-        return $this->products;
+        return [
+            'data' => $this->products,
+            'last_id' => isset($product) ? $product->getId() : 0
+        ];
     }
 
 

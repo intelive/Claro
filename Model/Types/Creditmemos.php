@@ -10,6 +10,7 @@ namespace Intelive\Claro\Model\Types;
 
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Sales\Model\Order\Creditmemo;
+use Monolog\Logger;
 
 class Creditmemos
 {
@@ -82,12 +83,15 @@ class Creditmemos
                     }
                 }
             }
-            if (isset($creditmemo)) {
-                $this->helper->saveSyncData($creditmemo->getId(), \Intelive\Claro\Model\Types\Creditmemo::ENTITY_TYPE);
-            }
 
-            return $this->creditmemos;
-        } catch (NoSuchEntityException $noSuchEntityException) {
+        } catch (\Exception $ex) {
+            $this->helper->log($ex->getMessage(), Logger::CRITICAL);
+            $this->creditmemos = null;
         }
+
+        return [
+            'data' => $this->creditmemos,
+            'last_id' => isset($creditmemo) ? $creditmemo->getId() : 0
+        ];
     }
 }

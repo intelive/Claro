@@ -8,6 +8,7 @@
 
 namespace Intelive\Claro\Observer;
 
+use Intelive\Claro\Helper\Data;
 use Magento\Customer\Model\Customer;
 
 class CustomerRegister implements \Magento\Framework\Event\ObserverInterface
@@ -20,14 +21,19 @@ class CustomerRegister implements \Magento\Framework\Event\ObserverInterface
     /** @var \Intelive\Claro\Model\ResourceModel\ClaroReportsCampaigns */
     protected $campaignsResourceModel;
 
+    /** @var Data  */
+    protected $helper;
+
     public function __construct(
         \Intelive\Claro\Helper\Utmz $utmzHelper,
         \Intelive\Claro\Model\ClaroReportsCampaignsFactory $campaignsFactory,
-        \Intelive\Claro\Model\ResourceModel\ClaroReportsCampaigns $campaignsResourceModel
+        \Intelive\Claro\Model\ResourceModel\ClaroReportsCampaigns $campaignsResourceModel,
+        Data $helper
     ) {
         $this->utmzHelper = $utmzHelper;
         $this->campaignsFactory = $campaignsFactory;
         $this->campaignsResourceModel = $campaignsResourceModel;
+        $this->helper = $helper;
     }
 
     public function execute(\Magento\Framework\Event\Observer $observer)
@@ -50,6 +56,7 @@ class CustomerRegister implements \Magento\Framework\Event\ObserverInterface
                 $this->campaignsResourceModel->save($campaign);
             }
         } catch (\Exception $exception) {
+            $this->helper->log($exception->getMessage());
         }
     }
 }
