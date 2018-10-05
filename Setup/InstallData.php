@@ -122,6 +122,30 @@ class InstallData implements InstallDataInterface
                 0,
                 null
             );
+            $urls[] = array(
+                null,
+                'custom',
+                0,
+                'intelive/module/' . rand(1, 100000),
+                'intelive/module/stocks',
+                0,
+                $this->storeManager->getStore()->getId(),
+                null,
+                0,
+                null
+            );
+            $urls[] = array(
+                null,
+                'custom',
+                0,
+                'intelive/module/' . rand(1, 100000),
+                'intelive/module/productcounters',
+                0,
+                $this->storeManager->getStore()->getId(),
+                null,
+                0,
+                null
+            );
             $setup->getConnection()->insertArray($setup->getTable(self::$table), self::$fields, $urls);
         }
     }

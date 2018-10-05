@@ -12,6 +12,7 @@ use Intelive\Claro\Helper\Data;
 
 class Stocks
 {
+    const CATALOG_INVENTORY_STOCK_ITEM_TABLE = 'cataloginventory_stock_item';
     protected $objectManager;
     protected $helper;
 
@@ -29,7 +30,7 @@ class Stocks
         try {
             $resource = $this->objectManager->get('Magento\Framework\App\ResourceConnection');
             $connection = $resource->getConnection();
-            $tableName = $resource->getTableName('cataloginventory_stock_item');
+            $tableName = $resource->getTableName(self::CATALOG_INVENTORY_STOCK_ITEM_TABLE);
 
             $sql = "SELECT product_id as id, SUM(qty) as s FROM {$tableName} GROUP BY product_id HAVING s>0";
 

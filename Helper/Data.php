@@ -18,6 +18,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
     const TYPE_SYNC = 'SYNC';
     const TYPE_STOCK = 'STOCK';
+    const TYPE_P_COUNTERS = 'PRODUCT_COUNTERS';
 
     protected $config;
 
