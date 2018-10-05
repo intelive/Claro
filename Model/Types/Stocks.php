@@ -18,7 +18,8 @@ class Stocks
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
         Data $helper
-    ) {
+    )
+    {
         $this->objectManager = $objectManager;
         $this->helper = $helper;
     }
@@ -34,17 +35,17 @@ class Stocks
 
             $result = $connection->query($sql);
 
-            $stock = new \stdClass();
-            $stock->date = date('Y-m-d');
-            $stock->stock = $result->fetchAll(\PDO::FETCH_ASSOC);
+            $stockObj = new \stdClass();
+            $stockObj->date = date('Y-m-d');
+            $stockObj->stock = $result->fetchAll(\PDO::FETCH_ASSOC);
 
             $returnedIds = [];
-            foreach ($stock->stock as $stock) {
+            foreach ($stockObj->stock as $stock) {
                 $returnedIds[] = $stock['id'];
             }
 
             return [
-                'data' => $stock,
+                'data' => $stockObj,
                 'last_id' => $stock['id'],
                 'returned_ids' => $returnedIds
             ];

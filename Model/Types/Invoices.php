@@ -34,7 +34,7 @@ class Invoices
     public function __construct(
         \Intelive\Claro\Helper\Data $helper,
         \Magento\Sales\Model\ResourceModel\Order\Invoice\CollectionFactory $invoicesFactory,
-        ShippmentFactory $shippingFactory,
+        \Magento\Sales\Model\ResourceModel\Order\Shipment\CollectionFactory $shippingFactory,
         \Magento\Sales\Model\ResourceModel\Order\CollectionFactory $orderFactory,
         \Magento\Framework\ObjectManagerInterface $objectManager
     )
