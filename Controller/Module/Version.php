@@ -64,7 +64,7 @@ class Version extends \Intelive\Claro\Controller\Module {
         $data->lastSentIdProduct = (string) $this->syncResourceModel->getLastIdDate('product');
         $data->lastSentIdInvoice = (string) $this->syncResourceModel->getLastIdDate('invoice');
         $data->lastSentIdCreditmemo = (string) $this->syncResourceModel->getLastIdDate('creditmemo');
-        $data->lastSentIdAbandonedCart = (string) $this->syncResourceModel->getLastIdDate('abcart');
+        $data->lastSentIdAbandonedCart = (string) $this->syncResourceModel->getLastIdDate('abandonedcart');
         $data->lastSentIdCustomer = (string) $this->syncResourceModel->getLastIdDate('customer');
         $data->claroPluginVersion = (string) $this->helper->getVersion();
         $data->claroModuleEnabled = $this->helper->getConfig()['enabled']; // sync status

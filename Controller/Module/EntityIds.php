@@ -11,33 +11,26 @@ namespace Intelive\Claro\Controller\Module;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Intelive\Claro\Helper\Data;
-use Intelive\Claro\Model\Types\StocksFactory;
+use Intelive\Claro\Model\Types\EntityIdsFactory;
 
-class Stocks extends \Intelive\Claro\Controller\Module
+class EntityIds extends \Intelive\Claro\Controller\Module
 {
     protected $resultJsonFactory;
-    protected $stocksFactory;
+    protected $entityIdsFactory;
 
-    /**
-     * @param \Magento\Framework\App\Action\Context $context
-     * @param \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
-     * @param StocksFactory $stocksFactory
-     * @param \Intelive\Claro\Helper\Data $helper
-     */
     public function __construct(
         Context $context,
         JsonFactory $resultJsonFactory,
-        StocksFactory $stocksFactory,
+        EntityIdsFactory $entityIdsFactory,
         Data $helper
-    ) {
-
+    )
+    {
         $this->resultJsonFactory = $resultJsonFactory;
-        $this->stocksFactory = $stocksFactory;
+        $this->entityIdsFactory = $entityIdsFactory;
         $this->helper = $helper;
-        parent::__construct($context);
-        parent::initParams();
-    }
 
+        parent::__construct($context);
+    }
     /**
      * @return \Magento\Framework\Controller\Result\Json
      */
@@ -52,11 +45,12 @@ class Stocks extends \Intelive\Claro\Controller\Module
 
             return $result;
         }
-        $stocks = $this->stocksFactory->create();
 
-        $data = $stocks->load();
-        $encodedData = $this->helper->prepareResult($data, 'stock', Data::TYPE_STOCK);
+        $entityIds = $this->entityIdsFactory->create();
 
-        return $result->setData($encodedData);
+        $data = $entityIds->load();
+
+        return $result->setData($data);
+
     }
 }

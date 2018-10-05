@@ -16,7 +16,7 @@ use Monolog\Logger;
 
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
-    const TYPE = 'SYNC';
+    const TYPE_SYNC = 'SYNC';
     const TYPE_STOCK = 'STOCK';
 
     protected $config;
@@ -98,6 +98,10 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         );
         $this->config['debug_status'] = $this->scopeConfig->getValue(
             'claroconfig/advanced/debug_status',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+        $this->config['use_shipping'] = $this->scopeConfig->getValue(
+            'claroconfig/advanced/use_shipping',
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
 
@@ -220,7 +224,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 $data = $compressed;
             }
         }
-        $callType = $type != '' ? $type : self::TYPE;
+        $callType = $type != '' ? $type : self::TYPE_SYNC;
         $lastId = isset($payload['last_id']) ? $payload['last_id'] : 0;
         $returnedIds = isset($payload['returned_ids']) ? implode(', ', $payload['returned_ids']) : 0;
         $url = \Magento\Framework\App\ObjectManager::getInstance()

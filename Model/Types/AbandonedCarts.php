@@ -75,20 +75,22 @@ class AbandonedCarts
                 $collection = $this->cartCollection
                     ->addFieldToFilter('main_table.' . $filterBy, $filter);
             }
+            $collection->addFieldToFilter('main_table.items_count', ['gt' => 0]);
+            $collection->addFieldToFilter('main_table.is_active', '1');
             // Return abandoned carts that begin with the specified id
             if ($fromId) {
                 $collection = $this->cartCollection
                     ->addFieldToFilter('main_table.entity_id', ['gteq' => $fromId]);
             }
-            $collection->addFieldToFilter('main_table.store_id', $this->helper->getStore()->getStoreId());
-            $collection->prepareForAbandonedReport(array($this->helper->getStore()->getWebsiteId()));
-            $collection->setOrder('created_at', $sortDir);
+            $collection->setOrder('updated_at', 'ASC');
             $collection->setCurPage($pageNum);
             $collection->setPageSize($pageSize);
 
             if ($collection->getLastPageNumber() < $pageNum) {
                 return $this;
             }
+
+            $lastId = [];
             $returnedIds = [];
             /** @var \Magento\Quote\Model\Quote $cart */
             foreach ($collection as $cart) {
@@ -98,13 +100,14 @@ class AbandonedCarts
                     if ($model) {
                         $returnedIds[] = $cart->getId();
                         $this->carts['quote_' . $cart->getId()] = $model;
+                        $lastId[] = $cart->getId();
                     }
                 }
             }
 
             return [
                 'data' => $this->carts,
-                'last_id' => isset($cart) ? $cart->getId() : 0,
+                'last_id' => !empty($lastId) ? max($lastId) : 0,
                 'returned_ids' => $returnedIds
             ];
         } catch (\Exception $ex) {

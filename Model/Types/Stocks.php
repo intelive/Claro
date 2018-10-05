@@ -12,16 +12,13 @@ use Intelive\Claro\Helper\Data;
 
 class Stocks
 {
-    protected $stockCollectionFactory;
     protected $objectManager;
     protected $helper;
 
     public function __construct(
-        \Magento\CatalogInventory\Model\ResourceModel\Stock\Item\CollectionFactory $stockCollectionFactory,
         \Magento\Framework\ObjectManagerInterface $objectManager,
         Data $helper
     ) {
-        $this->stockCollectionFactory = $stockCollectionFactory;
         $this->objectManager = $objectManager;
         $this->helper = $helper;
     }

@@ -64,7 +64,6 @@ class Orders
                 $collection->addFieldToFilter('main_table.entity_id', ['gteq' => $fromId]);
             }
 
-            $collection->addAttributeToFilter('main_table.store_id', $this->helper->getStore()->getStoreId());
             $collection->addAttributeToSort('created_at', $sortDir);
             $collection->setCurPage($pageNum);
             $collection->setPageSize($pageSize);

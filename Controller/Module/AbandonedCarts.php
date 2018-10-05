@@ -47,7 +47,6 @@ class AbandonedCarts extends \Intelive\Claro\Controller\Module
     public function execute()
     {
         $result = $this->resultJsonFactory->create();
-        $abandonedCarts = $this->abandonedCartsFactory->create();
 
         if ($this->isAuthorized() != true || $this->isEnabled() != true) {
             $content = $this->helper->prepareDefaultResult();
@@ -56,6 +55,8 @@ class AbandonedCarts extends \Intelive\Claro\Controller\Module
 
             return $result;
         }
+
+        $abandonedCarts = $this->abandonedCartsFactory->create();
 
         $data = $abandonedCarts->load(
             $this->pageSize,
@@ -68,14 +69,6 @@ class AbandonedCarts extends \Intelive\Claro\Controller\Module
             $this->fromId
         );
 
-        /**
-         * add to the response:
-         * content
-         * isGzipped
-         * isEncoded
-         * type (order, customer, etc)
-         * lastId
-         */
         $encodedData = $this->helper->prepareResult($data, AbandonedCart::ENTITY_TYPE);
 
         return $result->setData($encodedData);

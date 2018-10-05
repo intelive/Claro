@@ -47,7 +47,6 @@ class Orders extends \Intelive\Claro\Controller\Module
     public function execute()
     {
         $result = $this->resultJsonFactory->create();
-        $orders = $this->ordersFactory->create();
 
         if ($this->isAuthorized() != true || $this->isEnabled() != true) {
             $content = $this->helper->prepareDefaultResult();
@@ -56,6 +55,7 @@ class Orders extends \Intelive\Claro\Controller\Module
             
             return $result;
         }
+        $orders = $this->ordersFactory->create();
 
         $data = $orders->load(
             $this->pageSize,

@@ -64,9 +64,7 @@ class Creditmemos
             if ($fromId) {
                 $collection->addFieldToFilter('main_table.entity_id', ['gteq' => $fromId]);
             }
-            $collection->addFieldToFilter('main_table.store_id', $this->helper->getStore()->getStoreId());
 
-            $collection->addAttributeToFilter('store_id', $this->helper->getStore()->getStoreId());
             $collection->setOrder('created_at', $sortDir);
             $collection->setCurPage($pageNum);
             $collection->setPageSize($pageSize);
@@ -74,6 +72,7 @@ class Creditmemos
                 return $this;
             }
 
+            $lastId = [];
             $returnedIds = [];
             /** @var Creditmemo $creditmemo */
             foreach ($collection as $creditmemo) {
@@ -82,13 +81,14 @@ class Creditmemos
                     if ($model) {
                         $returnedIds[] = $creditmemo->getId();
                         $this->creditmemos['creditnote_' . $creditmemo->getIncrementId()] = $model;
+                        $lastId[] = $creditmemo->getId();
                     }
                 }
             }
 
             return [
                 'data' => $this->creditmemos,
-                'last_id' => isset($creditmemo) ? $creditmemo->getId() : 0,
+                'last_id' => !empty($lastId) ? max($lastId) : 0,
                 'returned_ids' => $returnedIds
             ];
 

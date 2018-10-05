@@ -47,7 +47,6 @@ class CreditMemos extends \Intelive\Claro\Controller\Module
     public function execute()
     {
         $result = $this->resultJsonFactory->create();
-        $creditmemos = $this->creditmemosFactory->create();
 
         if ($this->isAuthorized() != true || $this->isEnabled() != true) {
             $content = $this->helper->prepareDefaultResult();
@@ -56,6 +55,7 @@ class CreditMemos extends \Intelive\Claro\Controller\Module
 
             return $result;
         }
+        $creditmemos = $this->creditmemosFactory->create();
 
         $data = $creditmemos->load(
             $this->pageSize,

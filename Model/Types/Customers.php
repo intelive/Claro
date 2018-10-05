@@ -63,7 +63,6 @@ class Customers
             } else {
                 $collection = $this->customerFactory->create();
             }
-            $collection->addAttributeToFilter('store_id', $this->helper->getStore()->getStoreId());
             // Return customers that begin with the specified id
             if ($fromId) {
                 $collection->addFieldToFilter('entity_id', ['gteq' => $fromId]);
@@ -82,6 +81,7 @@ class Customers
                 return $this;
             }
 
+            $lastId = [];
             $returnedIds = [];
             /** @var \Magento\Customer\Model\Customer $customer */
             foreach ($collection as $customer) {
@@ -91,13 +91,14 @@ class Customers
                     if ($model) {
                         $returnedIds[] = $customer->getId();
                         $this->customers['customer_' . $customer->getId()] = $model;
+                        $lastId[] = $customer->getId();
                     }
                 }
             }
 
             return [
                 'data' => $this->customers,
-                'last_id' => isset($customer) ? $customer->getId() : 0,
+                'last_id' => !empty($lastId) ? max($lastId) : 0,
                 'returned_ids' => $returnedIds
             ];
         } catch (\Exception $ex) {

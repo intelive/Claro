@@ -47,7 +47,6 @@ class Invoices extends \Intelive\Claro\Controller\Module
     public function execute()
     {
         $result = $this->resultJsonFactory->create();
-        $invoices = $this->invoicesFactory->create();
 
         if ($this->isAuthorized() != true || $this->isEnabled() != true) {
             $content = $this->helper->prepareDefaultResult();
@@ -56,6 +55,7 @@ class Invoices extends \Intelive\Claro\Controller\Module
 
             return $result;
         }
+        $invoices = $this->invoicesFactory->create();
 
         $data = $invoices->load(
             $this->pageSize,

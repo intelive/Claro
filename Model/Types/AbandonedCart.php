@@ -14,7 +14,7 @@ use Intelive\Claro\Helper\Data;
 class AbandonedCart
 {
 
-    const ENTITY_TYPE = 'abcart';
+    const ENTITY_TYPE = 'abandonedcart';
 
     protected $helper;
     protected $group;
@@ -42,7 +42,15 @@ class AbandonedCart
         $this->store_id = $cart->getStoreId();
         $this->customer_id = $cart->getCustomerId() ? $cart->getCustomerId() : 0;
         $this->created_at = $cart->getCreatedAt();
-        $this->items = $cart->getAllItems();
+        foreach ($cart->getAllItems() as $item) {
+            $items['item_' . $item->getProductId()] = [
+                'id' => $item->getProductId(),
+                'price' => $item->getPrice(),
+                'sku' => $item->getSku(),
+                'name' => $item->getName()
+            ];
+        }
+        $this->items = $items;
 
         return $this;
     }

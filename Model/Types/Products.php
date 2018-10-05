@@ -82,7 +82,6 @@ class Products
 
             $collection->joinField('qty', 'cataloginventory_stock_item', 'qty', 'product_id=entity_id', '{{table}}.stock_id=1', 'left');
 
-            $collection->setStore($this->helper->getStore());
             $collection->setOrder('updated_at', $sortDir);
             $collection->setCurPage($pageNum);
             $collection->setPageSize($pageSize);
@@ -90,6 +89,7 @@ class Products
                 return $this;
             }
 
+            $lastId = [];
             $returnedIds = [];
             /** @var \Magento\Catalog\Model\Product $product */
             foreach ($collection as $product) {
@@ -102,12 +102,13 @@ class Products
                 if ($model) {
                     $returnedIds[] = $product->getId();
                     $this->products[] = $model;
+                    $lastId[] = $product->getId();
                 }
             }
 
             return [
                 'data' => $this->products,
-                'last_id' => isset($product) ? $product->getId() : 0,
+                'last_id' => !empty($lastId) ? max($lastId) : 0,
                 'returned_ids' => $returnedIds
             ];
 
