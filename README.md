@@ -25,13 +25,13 @@ Next, add the required package your root `composer.json` file:
 
 ```json
     "require": {
-        "intelive/claro": "1.0.0"
+        "intelive/claro": "1.0.1"
     }
 ```
 
 You can also add this using the Composer command line with the command:
 
-    composer require intelive/claro:1.0.0
+    composer require intelive/claro:1.0.1
 
 #### Run Update
 From the command line, run the composer update with the command:
@@ -47,3 +47,29 @@ From the command line, run setup:upgrade with the command:
 From the command line, run di:compile with the command:
 
     magento setup:di:compile
+
+
+## Uninstall
+
+There are two ways to uninstall the module from Magento:
+
+#### Automatic Uninstall (Note: Puts the store in maintenance mode until the process is finished):
+From the command line, remove the code and database data related to the module:
+    
+    magento module:uninstall Intelive_Claro
+
+ 
+#### Manual Uninstall
+Disable the Intelive module from magento:
+
+    magento module:disable Intelive_Claro
+    magento setup:upgrade
+
+Remove the Intelive package from your `composer.json` and vendor folder:
+    
+    composer remove intelive/claro
+    
+Remove module data from the database:
+* Go to the table `url_rewrite` and remove any entries that match `target_path LIKE '%intelive%'`
+* Go to the table `core_config_data` and remove any entries that match `path LIKE '%intelive%'`
+* Go to the table `setup_module` and remove any entries that match `module LIKE '%intelive%'`
