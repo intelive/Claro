@@ -56,7 +56,7 @@ class Invoice
         $items = [];
         foreach ($invoice->getItemsCollection() as $invoiceItem) {
             $qty = $config['use_shipping'] == Invoices::ORDER_W_ORDER_DATA ? $invoiceItem->getQtyOrdered() : $invoiceItem->getQty();
-            $items = [
+            $items[] = [
                 'id' => $invoiceItem->getProductId(),
                 'qty' => $qty
             ];

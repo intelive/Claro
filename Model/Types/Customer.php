@@ -46,8 +46,12 @@ class Customer
         $this->name = $customer->getName();
         $this->gender = $customer->getGender();
         $this->group = $customer->getGroupId();
-        $this->bill_country = $customer->getDefaultBillingAddress()['city'];
-        $this->ship_country = $customer->getDefaultShippingAddress()['city'];
+        if (is_object($customer->getDefaultBillingAddress())) {
+            $this->bill_country =  $customer->getDefaultBillingAddress()->getCountryId();
+        }
+        if (is_object($customer->getDefaultShippingAddress())) {
+            $this->ship_country = $customer->getDefaultShippingAddress()->getCountryId();
+        }
         $this->source = $customer->getSource() ? $customer->getSource() : self::CHANNEL_UNTRACKED;
         $this->medium = $customer->getMedium() ? $customer->getMedium() : self::CHANNEL_UNTRACKED;
         $this->campaign = $customer->getContent() ? $customer->getContent() : self::CHANNEL_UNTRACKED;

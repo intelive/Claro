@@ -8,24 +8,28 @@
 
 namespace Intelive\Claro\Model\Types;
 
+
+use Magento\Catalog\Model\CategoryFactory;
+
 class Order
 {
     const ENTITY_TYPE = 'sales_order';
     const CHANNEL_UNTRACKED = '(untracked)';
 
     protected $helper;
-    protected $objectManager;
+    protected $categoryRepository;
 
     /**
+     * Order constructor.
      * @param \Intelive\Claro\Helper\Data $helper
-     * @param \Magento\Framework\ObjectManagerInterface $objectManager
+     * @param CategoryFactory $categoryRepository
      */
     public function __construct(
         \Intelive\Claro\Helper\Data $helper,
-        \Magento\Framework\ObjectManagerInterface $objectManager
+        CategoryFactory $categoryRepository
     ) {
         $this->helper = $helper;
-        $this->objectManager = $objectManager;
+        $this->categoryRepository = $categoryRepository;
     }
 
     /**
@@ -86,7 +90,7 @@ class Order
         /** @var \Magento\Sales\Model\Order\Item $orderItem */
         foreach ($order->getAllItems() as $orderItem) {
             $item = new \stdClass();
-            $item->item_id = $orderItem->getId();
+            $item->item_id = $orderItem->getProductId();
             $item->order_id = $orderItem->getOrderId();
             $item->sku = $orderItem->getSku();
             $item->name = $orderItem->getName();
@@ -96,9 +100,29 @@ class Order
             $item->parent_item_id = $orderItem->getParentItemId();
             $item->parent_item_sku = !is_null($orderItem->getParentItem()) ? $orderItem->getParentItem()->getSku() : null;
             $item->product_type = $orderItem->getProductType();
+            $item->creation_date = $orderItem->getCreatedAt();
             $item->created_at = $orderItem->getCreatedAt();
             $item->update_date = $orderItem->getUpdatedAt();
 
+            if ($product = $orderItem->getProduct()) {
+                $categoryRepo = $this->categoryRepository->create();
+                $mainCategory = $product->getCategoryCollection()->getFirstItem();
+                $ids = array_reverse($mainCategory->getPathIds());
+                $counter = 1;
+                foreach ($ids as $categoryId) {
+                    if ($counter > 5) {
+                        break;
+                    }
+                    if ($category = $categoryRepo->load($categoryId)) {
+                        $categories[] = array(
+                            'id' => $category->getId(),
+                            'name' => $category->getName(),
+                        );
+                    }
+                    $counter++;
+                }
+                $item->categories = $categories;
+            }
             if (isset($orderItem->getProductOptions()['attributes_info'])) {
                 $orderItemOptions = [];
                 foreach ($orderItem->getProductOptions()['attributes_info'] as $option) {
@@ -111,7 +135,7 @@ class Order
                 }
                 $item->options = $orderItemOptions;
             }
-            $orderItems['item_' . $orderItem->getItemId()] = $item;
+            $orderItems['item_' . $orderItem->getProductId()] = $item;
         }
         $this->items = $orderItems;
         $this->status = $order->getStatus();
