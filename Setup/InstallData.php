@@ -49,7 +49,7 @@ class InstallData implements InstallDataInterface
         ModuleDataSetupInterface $setup,
         ModuleContextInterface $context
     ) {
-        if (!$this->urlRewrite->getCollection()->getItemByColumnValue('request_path', 'intelive/module/abandoned_carts')) {
+        if (!$this->urlRewrite->getCollection()->getItemByColumnValue('request_path', 'intelive/module/abandonedcarts')) {
             $urls[] = array(
                 null,
                 'custom',
