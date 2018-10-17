@@ -48,7 +48,11 @@ From the command line, run di:compile with the command:
 
     magento setup:di:compile
 
+#### Run setup:static-content:deploy
+From the command line, run setup:static-content:deploy with the command:
 
+    magento setup:static-content:deploy
+    
 ## Uninstall
 
 There are two ways to uninstall the module from Magento:

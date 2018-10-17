@@ -84,7 +84,7 @@ class Invoices
                 $collection->addFieldToFilter('main_table.entity_id', ['gteq' => $fromId]);
             }
 
-            $collection->setOrder('created_at', $sortDir);
+            $collection->setOrder('entity_id', $sortDir);
             $collection->setCurPage($pageNum);
             $collection->setPageSize($pageSize);
             if ($collection->getLastPageNumber() < $pageNum) {
@@ -111,7 +111,7 @@ class Invoices
                 'returned_ids' => $returnedIds
             ];
         } catch (\Exception $ex) {
-            $this->helper->log($ex->getMessage(), Logger::CRITICAL);
+            $this->helper->log($ex->getMessage() . ' Trace ' . $ex->getTraceAsString(), Logger::CRITICAL);
 
             return [];
         }

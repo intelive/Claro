@@ -68,12 +68,13 @@ class Customers
                 $collection->addFieldToFilter('entity_id', ['gteq' => $fromId]);
             }
 
-            $collection->setOrder('created_at', $sortDir);
+            $collection->setOrder('entity_id', $sortDir);
             $collection->setCurPage($pageNum);
             $collection->setPageSize($pageSize);
+            $campaignsTable = $collection->getResource()->getTable('claroreports_campaigns');
             $collection->getSelect()
                 ->joinLeft(
-                    array('campaigns' => 'claroreports_campaigns'), "e.entity_id=campaigns.entity_id AND campaigns.type='customer'", array('source', 'medium', 'content', 'campaign', 'gclid')
+                    array('campaigns' => $campaignsTable), "e.entity_id=campaigns.entity_id AND campaigns.type='customer'", array('source', 'medium', 'content', 'campaign', 'gclid')
                 )
                 ->limit(1);
 
@@ -102,7 +103,7 @@ class Customers
                 'returned_ids' => $returnedIds
             ];
         } catch (\Exception $ex) {
-            $this->helper->log($ex->getMessage(), Logger::CRITICAL);
+            $this->helper->log($ex->getMessage() . ' Trace ' . $ex->getTraceAsString(), Logger::CRITICAL);
             return [];
         }
     }

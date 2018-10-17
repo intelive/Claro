@@ -51,7 +51,7 @@ class Stocks
                 'returned_ids' => $returnedIds
             ];
         } catch (\Exception $ex) {
-            $this->helper->log($ex->getMessage(), Logger::CRITICAL);
+            $this->helper->log($ex->getMessage() . ' Trace ' . $ex->getTraceAsString(), Logger::CRITICAL);
 
             return [];
         }

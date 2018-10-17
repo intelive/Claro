@@ -64,15 +64,17 @@ class Orders
                 $collection->addFieldToFilter('main_table.entity_id', ['gteq' => $fromId]);
             }
 
-            $collection->addAttributeToSort('created_at', $sortDir);
+            $collection->addAttributeToSort('entity_id', $sortDir);
             $collection->setCurPage($pageNum);
             $collection->setPageSize($pageSize);
             if ($collection->getLastPageNumber() < $pageNum) {
                 return $this;
             }
+            $campaignsTable = $collection->getResource()->getTable('claroreports_campaigns');
+
             $collection->getSelect()
                 ->joinLeft(
-                    array('campaigns' => 'claroreports_campaigns'), "main_table.entity_id=campaigns.entity_id AND campaigns.type='order'", array('source', 'medium', 'content', 'campaign', 'gclid')
+                    array('campaigns' => $campaignsTable), "main_table.entity_id=campaigns.entity_id AND campaigns.type='order'", array('source', 'medium', 'content', 'campaign', 'gclid')
                 )
                 ->limit(1);
 
@@ -94,7 +96,7 @@ class Orders
                 'returned_ids' => $returnedIds
             ];
         } catch (\Exception $ex) {
-            $this->helper->log($ex->getMessage(), Logger::CRITICAL);
+            $this->helper->log($ex->getMessage() . ' Trace ' . $ex->getTraceAsString(), Logger::CRITICAL);
             return [];
         }
 

@@ -82,7 +82,7 @@ class AbandonedCarts
                 $collection = $this->cartCollection
                     ->addFieldToFilter('main_table.entity_id', ['gteq' => $fromId]);
             }
-            $collection->setOrder('updated_at', 'ASC');
+            $collection->setOrder('updated_at', $sortDir);
             $collection->setCurPage($pageNum);
             $collection->setPageSize($pageSize);
 
@@ -111,7 +111,7 @@ class AbandonedCarts
                 'returned_ids' => $returnedIds
             ];
         } catch (\Exception $ex) {
-            $this->helper->log($ex->getMessage(), Logger::CRITICAL);
+            $this->helper->log($ex->getMessage() . ' Trace ' . $ex->getTraceAsString(), Logger::CRITICAL);
 
             return [];
         }

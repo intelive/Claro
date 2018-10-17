@@ -82,7 +82,7 @@ class Products
 
             $collection->joinField('qty', 'cataloginventory_stock_item', 'qty', 'product_id=entity_id', '{{table}}.stock_id=1', 'left');
 
-            $collection->setOrder('updated_at', $sortDir);
+            $collection->setOrder('entity_id', $sortDir);
             $collection->setCurPage($pageNum);
             $collection->setPageSize($pageSize);
             if ($collection->getLastPageNumber() < $pageNum) {
@@ -113,7 +113,7 @@ class Products
             ];
 
         } catch (\Exception $ex) {
-            $this->helper->log($ex->getMessage(), Logger::CRITICAL);
+            $this->helper->log($ex->getMessage() . ' Trace ' . $ex->getTraceAsString(), Logger::CRITICAL);
 
             return [];
         }
