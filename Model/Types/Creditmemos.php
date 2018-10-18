@@ -62,7 +62,7 @@ class Creditmemos
                 $collection = $this->creditmemosFactory->create();
             }
             if ($fromId) {
-                $collection->addFieldToFilter('main_table.entity_id', ['gteq' => $fromId]);
+                $collection->addFieldToFilter('main_table.entity_id', ['gt' => $fromId]);
             }
 
             $collection->setOrder('entity_id', $sortDir);

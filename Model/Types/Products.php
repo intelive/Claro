@@ -77,7 +77,7 @@ class Products
                     ->addAttributeToSelect('*');
             }
             if ($fromId) {
-                $collection->addFieldToFilter('entity_id', ['gteq' => $fromId]);
+                $collection->addFieldToFilter('entity_id', ['gt' => $fromId]);
             }
 
             $collection->joinField('qty', 'cataloginventory_stock_item', 'qty', 'product_id=entity_id', '{{table}}.stock_id=1', 'left');

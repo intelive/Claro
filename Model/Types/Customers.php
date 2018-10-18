@@ -65,7 +65,7 @@ class Customers
             }
             // Return customers that begin with the specified id
             if ($fromId) {
-                $collection->addFieldToFilter('entity_id', ['gteq' => $fromId]);
+                $collection->addFieldToFilter('entity_id', ['gt' => $fromId]);
             }
 
             $collection->setOrder('entity_id', $sortDir);

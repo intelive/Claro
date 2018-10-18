@@ -81,7 +81,7 @@ class Invoices
                 $collection->addAttributeToFilter($filterBy, array('from' => $from, 'to' => $to));
             }
             if ($fromId) {
-                $collection->addFieldToFilter('main_table.entity_id', ['gteq' => $fromId]);
+                $collection->addFieldToFilter('main_table.entity_id', ['gt' => $fromId]);
             }
 
             $collection->setOrder('entity_id', $sortDir);

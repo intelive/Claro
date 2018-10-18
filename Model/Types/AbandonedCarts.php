@@ -80,7 +80,7 @@ class AbandonedCarts
             // Return abandoned carts that begin with the specified id
             if ($fromId) {
                 $collection = $this->cartCollection
-                    ->addFieldToFilter('main_table.entity_id', ['gteq' => $fromId]);
+                    ->addFieldToFilter('main_table.entity_id', ['gt' => $fromId]);
             }
             $collection->setOrder('entity_id', $sortDir);
             $collection->setCurPage($pageNum);
