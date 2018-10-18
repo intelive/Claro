@@ -82,7 +82,7 @@ class AbandonedCarts
                 $collection = $this->cartCollection
                     ->addFieldToFilter('main_table.entity_id', ['gteq' => $fromId]);
             }
-            $collection->setOrder('updated_at', $sortDir);
+            $collection->setOrder('entity_id', $sortDir);
             $collection->setCurPage($pageNum);
             $collection->setPageSize($pageSize);
 
