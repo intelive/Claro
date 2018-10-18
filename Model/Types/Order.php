@@ -109,15 +109,18 @@ class Order
                 $mainCategory = $product->getCategoryCollection()->getFirstItem();
                 $ids = array_reverse($mainCategory->getPathIds());
                 $counter = 1;
+                $categories = [];
                 foreach ($ids as $categoryId) {
                     if ($counter > 5) {
                         break;
                     }
                     if ($category = $categoryRepo->load($categoryId)) {
-                        $categories[] = array(
-                            'id' => $category->getId(),
-                            'name' => $category->getName(),
-                        );
+                        if (!is_null($category->getId()) && !is_null($category->getName())) {
+                            $categories[] = array(
+                                'id' => $category->getId(),
+                                'name' => $category->getName(),
+                            );
+                        }
                     }
                     $counter++;
                 }
