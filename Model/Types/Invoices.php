@@ -71,6 +71,9 @@ class Invoices
                 case self::ORDER_W_ORDER_DATA:
                     $collection = $this->orderFactory->create();
                     break;
+                default:
+                    $collection = $this->invoicesFactory->create();
+                    break;
             }
             $this->pageNum = $pageNum;
             if ($id) {

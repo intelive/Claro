@@ -16,16 +16,43 @@ class EntityIds
     protected $helper;
     protected $resource;
     protected $connection;
+    /** @var \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory */
+    protected $productFactory;
+    /** @var \Magento\Sales\Model\ResourceModel\Order\CollectionFactory  */
+    protected $orderCollection;
+    /** @var \Magento\Sales\Model\ResourceModel\Order\Invoice\CollectionFactory  */
+    protected $invoicesFactory;
+    /** @var \Magento\Sales\Model\ResourceModel\Order\Shipment\CollectionFactory  */
+    protected $shippingFactory;
+    /** @var \Magento\Customer\Model\ResourceModel\Customer\CollectionFactory  */
+    protected $customerFactory;
+    /** @var \Magento\Sales\Model\ResourceModel\Order\Creditmemo\CollectionFactory  */
+    protected $creditmemosFactory;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        Data $helper
+        Data $helper,
+        \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productFactory,
+        \Magento\Sales\Model\ResourceModel\Order\CollectionFactory $orderCollection,
+        \Magento\Sales\Model\ResourceModel\Order\Invoice\CollectionFactory $invoicesFactory,
+        \Magento\Sales\Model\ResourceModel\Order\Shipment\CollectionFactory $shippingFactory,
+        \Magento\Customer\Model\ResourceModel\Customer\CollectionFactory $customerFactory,
+        \Magento\Sales\Model\ResourceModel\Order\Creditmemo\CollectionFactory $creditmemosFactory,
+        \Magento\Reports\Model\ResourceModel\Quote\Collection $cartCollection
     )
     {
         $this->objectManager = $objectManager;
         $this->helper = $helper;
         $this->resource = $this->objectManager->get('Magento\Framework\App\ResourceConnection');
         $this->connection = $this->resource->getConnection();
+
+        $this->productFactory = $productFactory;
+        $this->orderCollection = $orderCollection;
+        $this->invoicesFactory = $invoicesFactory;
+        $this->shippingFactory = $shippingFactory;
+        $this->customerFactory = $customerFactory;
+        $this->creditmemosFactory = $creditmemosFactory;
+        $this->cartCollection = $cartCollection;
     }
 
     public function load()
@@ -46,19 +73,21 @@ class EntityIds
      */
     protected function getAbandonedCartIds()
     {
-        $abandonedTableName = $this->resource->getTableName('quote');
-        $abandonedFrom = date('Y-m-d 00:00:00', strtotime('-14 days'));
-        $abandonedTo = date('Y-m-d 23:59:59', strtotime('-1 day'));
+        $filter = array(
+            'datetime' => 1,
+            'locale' => 'en_US',
+            'from' => date('Y-m-d 00:00:00', strtotime('-14 days')),
+            'to' => date('Y-m-d 23:59:59', strtotime('-1 day')),
+        );
 
-        $sql = "SELECT MAX(`entity_id`) as max_id
-                FROM {$abandonedTableName}
-                WHERE `created_at` >= '$abandonedFrom' 
-                AND `created_at` <= '$abandonedTo'
-                AND `items_count` > '0' 
-                AND `is_active` = '1'";
-        $result = $this->connection->query($sql);
+        $collection = $this->cartCollection
+            ->addFieldToFilter('main_table.' . 'created_at', $filter);
+        $collection->addFieldToFilter('main_table.items_count', ['gt' => 0]);
+        $collection->addFieldToFilter('main_table.is_active', '1');
+        $collection->setOrder('entity_id', 'DESC');
+        $collection->setPageSize(1);
 
-        return $result->fetchAll(\PDO::FETCH_OBJ)[0]->max_id;
+        return $collection->getLastItem()->getId();
     }
 
     /**
@@ -66,11 +95,7 @@ class EntityIds
      */
     protected function getCreditmemoIds()
     {
-        $creditmemoTableName = $this->resource->getTableName('sales_creditmemo');
-        $sql = "SELECT MAX(`entity_id`) as max_id FROM {$creditmemoTableName}";
-
-        $result = $this->connection->query($sql);
-        return $result->fetchAll(\PDO::FETCH_OBJ)[0]->max_id;
+        return $this->getEntityLastId($this->creditmemosFactory);
     }
 
     /**
@@ -78,11 +103,7 @@ class EntityIds
      */
     protected function getCustomerIds()
     {
-        $customerTableName = $this->resource->getTableName('customer_entity');
-        $sql = "SELECT MAX(`entity_id`) as max_id FROM {$customerTableName}";
-
-        $result = $this->connection->query($sql);
-        return $result->fetchAll(\PDO::FETCH_OBJ)[0]->max_id;
+        return $this->getEntityLastId($this->customerFactory);
     }
 
     /**
@@ -90,11 +111,26 @@ class EntityIds
      */
     protected function getInvoiceIds()
     {
-        $invoiceTableName = $this->resource->getTableName('sales_invoice');
-        $sql = "SELECT MAX(`entity_id`) as max_id FROM {$invoiceTableName}";
+        $config = $this->helper->getConfig();
+        switch ($config['use_shipping']) {
+            case Invoices::ORDER_W_INVOICE_DATA:
+                $collection = $this->invoicesFactory->create();
+                break;
+            case Invoices::ORDER_W_SHIPPING_DATA:
+                $collection = $this->shippingFactory->create();
+                break;
+            case Invoices::ORDER_W_ORDER_DATA:
+                $collection = $this->orderFactory->create();
+                break;
+            default:
+                $collection = $this->invoicesFactory->create();
+                break;
+        }
 
-        $result = $this->connection->query($sql);
-        return $result->fetchAll(\PDO::FETCH_OBJ)[0]->max_id;
+        $collection->setOrder('entity_id', 'DESC');
+        $collection->setPageSize(1);
+
+        return $collection->getLastItem()->getId();
     }
 
     /**
@@ -102,11 +138,7 @@ class EntityIds
      */
     protected function getOrderIds()
     {
-        $orderTableName = $this->resource->getTableName('sales_order');
-        $sql = "SELECT MAX(`entity_id`) as max_id FROM {$orderTableName}";
-
-        $result = $this->connection->query($sql);
-        return $result->fetchAll(\PDO::FETCH_OBJ)[0]->max_id;
+        return $this->getEntityLastId($this->orderCollection);
     }
 
     /**
@@ -114,13 +146,21 @@ class EntityIds
      */
     protected function getProductIds()
     {
-        $productTableName = $this->resource->getTableName('catalog_product_entity');
-        $inventoryStockTableName = $this->resource->getTableName('cataloginventory_stock_item');
+        return $this->getEntityLastId($this->productFactory);
+    }
 
-        $sql = "SELECT MAX(`e`.`entity_id`) as max_id FROM {$productTableName} AS `e`
-                LEFT JOIN {$inventoryStockTableName} AS `at_qty` ON (at_qty.`product_id`=e.entity_id) AND (at_qty.stock_id=1)";
+    /**
+     * @param $entityFactory
+     * @return mixed
+     */
+    protected function getEntityLastId($entityFactory)
+    {
+        $collection = $entityFactory->create()
+            ->addAttributeToSelect('*');
 
-        $result = $this->connection->query($sql);
-        return $result->fetchAll(\PDO::FETCH_OBJ)[0]->max_id;
+        $collection->setOrder('entity_id', 'DESC');
+        $collection->setPageSize(1);
+
+        return $collection->getLastItem()->getId();
     }
 }
