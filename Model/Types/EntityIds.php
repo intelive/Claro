@@ -29,6 +29,8 @@ class EntityIds
     /** @var \Magento\Sales\Model\ResourceModel\Order\Creditmemo\CollectionFactory  */
     protected $creditmemosFactory;
 
+    protected $cartFactory;
+
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
         Data $helper,
@@ -38,7 +40,7 @@ class EntityIds
         \Magento\Sales\Model\ResourceModel\Order\Shipment\CollectionFactory $shippingFactory,
         \Magento\Customer\Model\ResourceModel\Customer\CollectionFactory $customerFactory,
         \Magento\Sales\Model\ResourceModel\Order\Creditmemo\CollectionFactory $creditmemosFactory,
-        \Magento\Reports\Model\ResourceModel\Quote\Collection $cartCollection
+        \Magento\Reports\Model\ResourceModel\Quote\CollectionFactory $cartFactory
     )
     {
         $this->objectManager = $objectManager;
@@ -52,7 +54,7 @@ class EntityIds
         $this->shippingFactory = $shippingFactory;
         $this->customerFactory = $customerFactory;
         $this->creditmemosFactory = $creditmemosFactory;
-        $this->cartCollection = $cartCollection;
+        $this->cartFactory = $cartFactory;
     }
 
     public function load()
@@ -80,8 +82,8 @@ class EntityIds
             'to' => date('Y-m-d 23:59:59', strtotime('-1 day')),
         );
 
-        $collection = $this->cartCollection
-            ->addFieldToFilter('main_table.' . 'created_at', $filter);
+        $collection = $this->cartFactory->create();
+        $collection->addFieldToFilter('main_table.' . 'created_at', $filter);
         $collection->addFieldToFilter('main_table.items_count', ['gt' => 0]);
         $collection->addFieldToFilter('main_table.is_active', '1');
         $collection->setOrder('entity_id', 'DESC');
