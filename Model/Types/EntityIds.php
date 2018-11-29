@@ -71,7 +71,7 @@ class EntityIds
     /**
      * @return mixed
      */
-    protected function getAbandonedCartIds()
+    public function getAbandonedCartIds()
     {
         $filter = array(
             'datetime' => 1,
@@ -93,7 +93,7 @@ class EntityIds
     /**
      * @return mixed
      */
-    protected function getCreditmemoIds()
+    public function getCreditmemoIds()
     {
         return $this->getEntityLastId($this->creditmemosFactory);
     }
@@ -101,7 +101,7 @@ class EntityIds
     /**
      * @return mixed
      */
-    protected function getCustomerIds()
+    public function getCustomerIds()
     {
         return $this->getEntityLastId($this->customerFactory);
     }
@@ -109,7 +109,7 @@ class EntityIds
     /**
      * @return mixed
      */
-    protected function getInvoiceIds()
+    public function getInvoiceIds()
     {
         $config = $this->helper->getConfig();
         switch ($config['use_shipping']) {
@@ -136,7 +136,7 @@ class EntityIds
     /**
      * @return mixed
      */
-    protected function getOrderIds()
+    public function getOrderIds()
     {
         return $this->getEntityLastId($this->orderCollection);
     }
@@ -144,7 +144,7 @@ class EntityIds
     /**
      * @return mixed
      */
-    protected function getProductIds()
+    public function getProductIds()
     {
         return $this->getEntityLastId($this->productFactory);
     }

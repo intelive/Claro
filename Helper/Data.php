@@ -13,6 +13,7 @@ use Magento\Framework\App\Helper\Context;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Module\ModuleListInterface;
 use Monolog\Logger;
+use Intelive\Claro\Model\Types\EntityIdsFactory;
 
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
@@ -41,6 +42,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     /** @var \Intelive\Claro\Model\ResourceModel\ClaroReportsSync */
     protected $syncResourceModel;
 
+    /** @var EntityIdsFactory  */
+    protected $entityIdsFactory;
+
     /**
      * Data constructor.
      * @param Context $context
@@ -55,7 +59,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         ModuleListInterface $moduleList,
         \Intelive\Claro\Model\ClaroReportsSyncFactory $syncFactory,
         \Intelive\Claro\Model\ResourceModel\ClaroReportsSync $syncResourceModel,
-        \Intelive\Claro\Logger\Logger $logger
+        \Intelive\Claro\Logger\Logger $logger,
+        EntityIdsFactory $entityIdsFactory
     )
     {
         parent::__construct($context);
@@ -66,6 +71,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $this->syncFactory = $syncFactory;
         $this->syncResourceModel = $syncResourceModel;
         $this->logger = $logger;
+        $this->entityIdsFactory = $entityIdsFactory;
     }
 
     /**
@@ -225,8 +231,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 $data = $compressed;
             }
         }
+        if (isset($payload['last_id']) && $payload['last_id'] != 0) {
+            $lastId = $payload['last_id'];
+        } else {
+            // Return max lastId
+            $lastId = !is_null($this->getLastIdFromEntity($entity)) ? $this->getLastIdFromEntity($entity) : 0;
+        }
+
         $callType = $type != '' ? $type : self::TYPE_SYNC;
-        $lastId = isset($payload['last_id']) ? $payload['last_id'] : 0;
         $returnedIds = isset($payload['returned_ids']) ? implode(', ', $payload['returned_ids']) : 0;
         $url = \Magento\Framework\App\ObjectManager::getInstance()
             ->get('Magento\Framework\UrlInterface');
@@ -245,6 +257,39 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             'type' => $callType,
             'lastId' => $lastId
         ];
+    }
+
+    /**
+     * Returns max entity_id from the given entity
+     *
+     * @param $entity
+     * @return mixed
+     */
+    protected function getLastIdFromEntity($entity)
+    {
+        $entityIds = $this->entityIdsFactory->create();
+        switch ($entity) {
+            case 'product':
+                $lastId = $entityIds->getProductIds();
+                break;
+            case 'customer':
+                $lastId = $entityIds->getCustomerIds();
+                break;
+            case 'sales_order':
+                $lastId = $entityIds->getOrderIds();
+                break;
+            case 'sales_invoice':
+                $lastId = $entityIds->getInvoiceIds();
+                break;
+            case 'sales_creditnote':
+                $lastId = $entityIds->getCreditmemoIds();
+                break;
+            case 'abandonedcart':
+                $lastId = $entityIds->getAbandonedCartIds();
+                break;
+        }
+
+        return $lastId;
     }
 
     /**

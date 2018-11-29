@@ -80,8 +80,6 @@ class Products
                 $collection->addFieldToFilter('entity_id', ['gt' => $fromId]);
             }
 
-            $collection->joinField('qty', 'cataloginventory_stock_item', 'qty', 'product_id=entity_id', '{{table}}.stock_id=1', 'left');
-
             $collection->setOrder('entity_id', $sortDir);
             $collection->setCurPage($pageNum);
             $collection->setPageSize($pageSize);

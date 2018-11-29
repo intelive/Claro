@@ -51,6 +51,5 @@ class EntityIds extends \Intelive\Claro\Controller\Module
         $data = $entityIds->load();
 
         return $result->setData($data);
-
     }
 }
