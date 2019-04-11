@@ -76,7 +76,7 @@ class Orders
                 ->joinLeft(
                     array('campaigns' => $campaignsTable), "main_table.entity_id=campaigns.entity_id AND campaigns.type='order'", array('source', 'medium', 'content', 'campaign', 'gclid')
                 )
-                ->limit(1);
+                ->group('main_table.entity_id');
 
             $returnedIds = [];
             /** @var \Magento\Sales\Model\Order $order */
