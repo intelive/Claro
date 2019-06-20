@@ -287,6 +287,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             case 'abandonedcart':
                 $lastId = $entityIds->getAbandonedCartIds();
                 break;
+            default:
+                $lastId = null;
+                break;
         }
 
         return $lastId;

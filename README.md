@@ -25,13 +25,13 @@ Next, add the required package your root `composer.json` file:
 
 ```json
     "require": {
-        "intelive/claro": "1.2.2"
+        "intelive/claro": "1.2.3"
     }
 ```
 
 You can also add this using the Composer command line with the command:
 
-    composer require intelive/claro:1.2.2
+    composer require intelive/claro:1.2.3
 
 #### Run Update
 From the command line, run the composer update with the command:

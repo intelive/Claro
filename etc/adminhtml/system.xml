@@ -13,7 +13,6 @@
                 <label>General</label>
                 <comment><![CDATA[The bellow credentials should have been given to you during the registration procedure. If you don't have them, <a href='https://app.unityreports.com' target='_blank'><b>log in</b></a> into your account and retrieve them from the "Profiles" section.<br>
                         If you don't have an account yet, you must <a href='https://app.unityreports.com/account/create' target='_blank'><b>create one</b></a> before using this module.<br><BR>
-                        If you are experiencing problems with this extension please run the self diagnosing test by clicking the button below.<br>
                         For any questions or help please visit us at <a href='http://unityreports.com/contacts' target='_blank'>Unityreports.com</a>.]]></comment>
                 <field id="status" translate="label" type="select" sortOrder="0" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Status</label>

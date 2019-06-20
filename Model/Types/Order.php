@@ -89,6 +89,10 @@ class Order
         $orderItems = [];
         /** @var \Magento\Sales\Model\Order\Item $orderItem */
         foreach ($order->getAllItems() as $orderItem) {
+            // Only export simple products
+            if ($orderItem->getParentItem()) {
+                continue;
+            }
             $item = new \stdClass();
             $item->item_id = $orderItem->getProductId();
             $item->order_id = $orderItem->getOrderId();
