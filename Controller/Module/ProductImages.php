@@ -101,7 +101,8 @@ class ProductImages extends \Intelive\Claro\Controller\Module
             if ($type != 'unknown') {
                 $resultRaw = $this->resultFactory->create(ResultFactory::TYPE_RAW);
 
-                $resultRaw->setHeader('Content-Type:', $type)->setContents(readfile($path));
+                $resultRaw->setHeader('UnityReports', 'OK');
+                $resultRaw->setHeader('Content-Type', $type)->setContents(readfile($path));
 
                 return $resultRaw;
             }
