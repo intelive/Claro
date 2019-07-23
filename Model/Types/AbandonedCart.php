@@ -42,6 +42,7 @@ class AbandonedCart
         $this->store_id = $cart->getStoreId();
         $this->customer_id = $cart->getCustomerId() ? $cart->getCustomerId() : 0;
         $this->created_at = $cart->getCreatedAt();
+        $items = [];
         foreach ($cart->getAllItems() as $item) {
             $items['item_' . $item->getProductId()] = [
                 'id' => $item->getProductId(),
