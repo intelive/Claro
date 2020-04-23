@@ -104,9 +104,9 @@ class Order
             $item->parent_item_id = $orderItem->getParentItemId();
             $item->parent_item_sku = !is_null($orderItem->getParentItem()) ? $orderItem->getParentItem()->getSku() : null;
             $item->product_type = $orderItem->getProductType();
-            $item->creation_date = $orderItem->getCreatedAt();
-            $item->created_at = $orderItem->getCreatedAt();
-            $item->update_date = $orderItem->getUpdatedAt();
+            $item->creation_date = $orderItem->getCreatedAt();#not used anymore
+            $item->created_at = $orderItem->getCreatedAt();#not used anymore
+            $item->update_date = $orderItem->getUpdatedAt();# not used anymore
 
             if ($product = $orderItem->getProduct()) {
                 $categoryRepo = $this->categoryRepository->create();
@@ -147,8 +147,8 @@ class Order
         $this->items = $orderItems;
         $this->status = $order->getStatus();
         $this->state = $order->getState();
-        $this->shipping_description = $order->getShippingDescription();
-        $this->payment_method = $order->getPayment()->getMethod();
+        $this->shipping_description = $order->getShippingDescription(); # not used anymore
+        $this->payment_method = $order->getPayment()->getMethod(); #not used anymore
 
         return $this;
     }
