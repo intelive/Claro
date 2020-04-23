@@ -214,7 +214,10 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $responseIsEncoded = false;
         $responseIsCompressed = false;
 
-        $data = $payload['data'];
+        $data = [];
+        if (isset($payload['data'])) {
+            $data = $payload['data'];
+        }
 
         // Encode and compress the data only if we have it
         if (!empty($data)) {
