@@ -38,7 +38,6 @@ class Customers extends \Intelive\Claro\Controller\Module
         $this->helper = $helper;
         parent::__construct($context);
         parent::initParams();
-
     }
 
     /**

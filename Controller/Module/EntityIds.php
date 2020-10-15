@@ -23,8 +23,7 @@ class EntityIds extends \Intelive\Claro\Controller\Module
         JsonFactory $resultJsonFactory,
         EntityIdsFactory $entityIdsFactory,
         Data $helper
-    )
-    {
+    ) {
         $this->resultJsonFactory = $resultJsonFactory;
         $this->entityIdsFactory = $entityIdsFactory;
         $this->helper = $helper;

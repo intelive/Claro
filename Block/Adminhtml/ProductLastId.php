@@ -25,8 +25,7 @@ class ProductLastId extends \Magento\Config\Block\System\Config\Form\Field
         Template\Context $context,
         \Intelive\Claro\Model\ResourceModel\ClaroReportsSync $syncResourceModel,
         array $data = []
-    )
-    {
+    ) {
         $this->syncResourceModel = $syncResourceModel;
         parent::__construct($context, $data);
     }
@@ -35,7 +34,8 @@ class ProductLastId extends \Magento\Config\Block\System\Config\Form\Field
      * @param AbstractElement $element
      * @return string
      */
-    protected function _getElementHtml(AbstractElement $element) {
+    protected function _getElementHtml(AbstractElement $element)
+    {
         return $this->syncResourceModel->getLastIdDate('product');
     }
 }

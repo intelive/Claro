@@ -1,5 +1,5 @@
 {
-  "name": "intelive/claro",
+  "name": "unityreports/claro",
   "description": "Use historical data to uncover your most profitable merchandise, channels, and customer segments",
   "author": [
       {
@@ -9,12 +9,15 @@
       }
    ],
   "type": "magento2-module",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "license": [
     "GPL-3.0+"
   ],
   "require": {
-    "php": ">=5.5.0"
+    "php": ">=5.5.0",
+    "ext-curl": "*",
+    "ext-json": "*",
+    "ext-zlib": "*"
   },
   "autoload": {
     "files": ["registration.php"],

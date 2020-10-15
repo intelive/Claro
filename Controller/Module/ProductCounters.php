@@ -30,8 +30,7 @@ class ProductCounters extends \Intelive\Claro\Controller\Module
         JsonFactory $resultJsonFactory,
         ProductCountersFactory $productCountersFactory,
         Data $helper
-    )
-    {
+    ) {
         $this->resultJsonFactory = $resultJsonFactory;
         $this->productCountersFactory = $productCountersFactory;
         $this->helper = $helper;

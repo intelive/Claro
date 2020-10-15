@@ -10,8 +10,9 @@ namespace Intelive\Claro\Block\Adminhtml;
 
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Backend\Block\Template;
+use \Magento\Config\Block\System\Config\Form\Field;
 
-class InstallationIp extends \Magento\Config\Block\System\Config\Form\Field
+class InstallationIp extends Field
 {
     /**
      * InstallationIp constructor.
@@ -21,8 +22,7 @@ class InstallationIp extends \Magento\Config\Block\System\Config\Form\Field
     public function __construct(
         Template\Context $context,
         array $data = []
-    )
-    {
+    ) {
         parent::__construct($context, $data);
     }
 
@@ -30,7 +30,8 @@ class InstallationIp extends \Magento\Config\Block\System\Config\Form\Field
      * @param AbstractElement $element
      * @return string
      */
-    protected function _getElementHtml(AbstractElement $element) {
+    protected function _getElementHtml(AbstractElement $element)
+    {
         return $_SERVER['SERVER_ADDR'];
     }
 }

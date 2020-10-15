@@ -32,13 +32,11 @@ class Orders extends \Intelive\Claro\Controller\Module
         OrdersFactory $ordersFactory,
         Data $helper
     ) {
-
         $this->resultJsonFactory = $resultJsonFactory;
         $this->ordersFactory = $ordersFactory;
         $this->helper = $helper;
         parent::__construct($context);
         parent::initParams();
-
     }
 
     /**

@@ -31,15 +31,12 @@ class CreditMemos extends \Intelive\Claro\Controller\Module
         CreditmemosFactory $creditmemosFactory,
         Data $helper
     ) {
-
         $this->resultJsonFactory = $resultJsonFactory;
         $this->creditmemosFactory = $creditmemosFactory;
         $this->helper = $helper;
         parent::__construct($context);
         parent::initParams();
-
     }
-
 
     /**
      * @return \Magento\Framework\Controller\Result\Json

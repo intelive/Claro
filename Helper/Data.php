@@ -14,6 +14,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Module\ModuleListInterface;
 use Monolog\Logger;
 use Intelive\Claro\Model\Types\EntityIdsFactory;
+use Magento\Framework\Serialize\Serializer\Serialize;
 
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
@@ -46,6 +47,11 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     protected $entityIdsFactory;
 
     /**
+     * @var Serialize
+     */
+    protected $serializer;
+
+    /**
      * Data constructor.
      * @param Context $context
      * @param StoreManagerInterface $storeManager
@@ -60,7 +66,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         \Intelive\Claro\Model\ClaroReportsSyncFactory $syncFactory,
         \Intelive\Claro\Model\ResourceModel\ClaroReportsSync $syncResourceModel,
         \Intelive\Claro\Logger\Logger $logger,
-        EntityIdsFactory $entityIdsFactory
+        EntityIdsFactory $entityIdsFactory,
+        Serialize $serializer
     )
     {
         parent::__construct($context);
@@ -72,6 +79,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $this->syncResourceModel = $syncResourceModel;
         $this->logger = $logger;
         $this->entityIdsFactory = $entityIdsFactory;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -309,7 +317,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             function_exists('gzcompress') &&
             function_exists('base64_encode')
         ) {
-            return base64_encode(gzcompress(serialize(($data))));
+            return base64_encode(gzcompress($this->serializer->serialize(($data))));
         } else {
             $this->log('Extensions zlib or gzcompress or base64_encode do not exist', Logger::CRITICAL);
         }
@@ -323,7 +331,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected function deCompress($data)
     {
-        return unserialize(gzuncompress(base64_decode($data)));
+        return $this->serializer->unserialize(gzuncompress(base64_decode($data)));
     }
 
     /**

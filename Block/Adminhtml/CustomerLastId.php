@@ -25,8 +25,7 @@ class CustomerLastId extends \Magento\Config\Block\System\Config\Form\Field
         Template\Context $context,
         \Intelive\Claro\Model\ResourceModel\ClaroReportsSync $syncResourceModel,
         array $data = []
-    )
-    {
+    ) {
         $this->syncResourceModel = $syncResourceModel;
         parent::__construct($context, $data);
     }

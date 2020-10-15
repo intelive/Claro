@@ -32,13 +32,11 @@ class AbandonedCarts extends \Intelive\Claro\Controller\Module
         AbandonedCartsFactory $abandonedCartsFactory,
         Data $helper
     ) {
-
         $this->resultJsonFactory = $resultJsonFactory;
         $this->abandonedCartsFactory = $abandonedCartsFactory;
         $this->helper = $helper;
         parent::__construct($context);
         parent::initParams();
-
     }
 
     /**

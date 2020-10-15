@@ -72,8 +72,6 @@ class Version extends \Intelive\Claro\Controller\Module {
         $data->magentoEdition = (string) $productMetadata->getEdition();
         $data->phpVersion = (string) phpversion();
         $data->apiVersion = "2.0";
-        $data->memoryLimit = @ini_get('memory_limit');
-        $data->maxExecutionTime = @ini_get('max_execution_time');
 
         return $result->setData($data);
     }
