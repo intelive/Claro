@@ -10,6 +10,7 @@ namespace Intelive\Claro\Model\Types;
 
 
 use Magento\Catalog\Model\CategoryFactory;
+use Magento\Framework\Phrase;
 
 class Order
 {
@@ -18,6 +19,8 @@ class Order
 
     protected $helper;
     protected $categoryRepository;
+    protected $attributes;
+    protected $setAttributes;
 
     /**
      * Order constructor.
@@ -27,9 +30,12 @@ class Order
     public function __construct(
         \Intelive\Claro\Helper\Data $helper,
         CategoryFactory $categoryRepository
-    ) {
+    )
+    {
         $this->helper = $helper;
         $this->categoryRepository = $categoryRepository;
+        $this->attributes = null;
+        $this->setAttributes = false;
     }
 
     /**
@@ -130,18 +136,23 @@ class Order
                 }
                 $item->categories = $categories;
             }
+
+            $orderItemOptions = [];
             if (isset($orderItem->getProductOptions()['attributes_info'])) {
-                $orderItemOptions = [];
                 foreach ($orderItem->getProductOptions()['attributes_info'] as $option) {
                     $itemAttribute = new \stdClass();
                     $itemAttribute->attribute_id = $option['option_id'];
                     $itemAttribute->item_id = $orderItem->getId();
                     $itemAttribute->label = $option['label'];
                     $itemAttribute->value = $option['value'];
-                    $orderItemOptions[] = $itemAttribute;
+                    $orderItemOptions[strtolower($option['label'])] = $itemAttribute;
                 }
-                $item->options = $orderItemOptions;
             }
+
+            $this->getOrderItemAttributes($orderItem, $orderItemOptions);
+
+            $item->options = $orderItemOptions;
+
             $orderItems['item_' . $orderItem->getProductId()] = $item;
         }
         $this->items = $orderItems;
@@ -151,5 +162,51 @@ class Order
         $this->payment_method = $order->getPayment()->getMethod(); #not used anymore
 
         return $this;
+    }
+
+    /**
+     * @param \Magento\Sales\Model\Order\Item $orderItem
+     * @param array $orderItemOptions
+     */
+    protected function getOrderItemAttributes($orderItem, &$orderItemOptions)
+    {
+        $product = $orderItem->getProduct();
+
+        if (!is_null($this->attributes) && $this->setAttributes) {
+            foreach ($this->attributes as $code => $value) {
+                if (!array_key_exists($code, $orderItemOptions)) {
+                    $itemAttribute = new \stdClass();
+                    $itemAttribute->attribute_id = $value['id'];
+                    $itemAttribute->item_id = $orderItem->getId();
+                    $itemAttribute->label = $value['label'];
+                    $itemAttribute->value = (string)$product->getAttributeText($code);
+                    $orderItemOptions[$code] = $itemAttribute;
+                }
+            }
+        } else {
+            $this->setAttributes = true;
+            $attributes = $product->getAttributes();
+            foreach ($attributes as $attribute) {
+                if ($attribute->getIsUserDefined() && $attribute->getBackendType() === 'int') {
+                    $value = $attribute->getFrontend()->getValue($product);
+                    if ($value instanceof Phrase) {
+                        $value = (string)$value;
+                    }
+                    $this->attributes[$attribute->getAttributeCode()] = ['id' => (int)$attribute->getId(),
+                        'label' => $attribute->getStoreLabel()];
+                    if (!array_key_exists(strtolower($attribute->getStoreLabel()), $orderItemOptions) || !empty($value)) {
+                        $itemAttribute = new \stdClass();
+                        $itemAttribute->attribute_id = (int)$attribute->getId();
+                        $itemAttribute->item_id = $orderItem->getId();
+                        $itemAttribute->label = $attribute->getStoreLabel();
+                        $itemAttribute->value = $value;
+                        $orderItemOptions[$attribute->getAttributeCode()] = $itemAttribute;
+
+                        $this->attributes[$attribute->getAttributeCode()] = ['id' => (int)$attribute->getId(),
+                            'label' => $attribute->getStoreLabel()];
+                    }
+                }
+            }
+        }
     }
 }
