@@ -135,7 +135,8 @@ class ProductImages extends \Intelive\Claro\Controller\Module
      */
     protected function getImageType($path)
     {
-        $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        $image = explode('?', $path);
+        $ext = strtolower(pathinfo($image[0], PATHINFO_EXTENSION));
         switch ($ext) {
             case 'gif':
                 $type = 'image/gif';
