@@ -57,7 +57,7 @@ class Products
      * @param $fromId
      * @return $this|array
      */
-    public function load($pageSize, $pageNum, $startDate = null, $endDate = null, $sortDir, $filterBy, $id, $fromId)
+    public function load($pageSize, $pageNum, $startDate = null, $endDate = null, $sortDir = null, $filterBy = null, $id = null, $fromId = null)
     {
         try {
             $this->pageNum = $pageNum;
